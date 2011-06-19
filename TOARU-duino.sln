@@ -1,0 +1,17 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "TOARU-duino", "TOARU-duino\TOARU-duino.mdproj", "{3A81BD20-00C9-4C7F-B140-5955C686E425}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Default|Any CPU = Default|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3A81BD20-00C9-4C7F-B140-5955C686E425}.Default|Any CPU.ActiveCfg = Default|Any CPU
+		{3A81BD20-00C9-4C7F-B140-5955C686E425}.Default|Any CPU.Build.0 = Default|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = TOARU-duino\TOARU-duino.mdproj
+	EndGlobalSection
+EndGlobal
