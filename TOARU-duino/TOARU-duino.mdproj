@@ -12,7 +12,6 @@
     <OutputPath>.</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="README.txt" />
     <None Include="Arduino.mk" />
     <None Include="cores\arduino\WProgram.h" />
     <None Include="cores\arduino\digital.cpp" />
