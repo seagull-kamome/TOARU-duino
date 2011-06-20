@@ -11,60 +11,17 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Default|AnyCPU' ">
     <OutputPath>.</OutputPath>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="Arduino.mk" />
-    <None Include="cores\arduino\WProgram.h" />
-    <None Include="cores\arduino\digital.cpp" />
-    <None Include="cores\arduino\digital.h" />
-    <None Include="cores\arduino\analog.h" />
-    <None Include="cores\arduino\analog.cpp" />
-    <None Include="cores\arduino\pde_main.inc" />
-    <None Include="cores\arduino\wiring.cpp" />
-    <None Include="cores\arduino\RingBuffer.h" />
-    <None Include="cores\arduino\Print.h" />
-    <None Include="cores\arduino\Print.cpp" />
-    <None Include="cores\arduino\UART.h" />
-    <None Include="cores\arduino\UART.cpp" />
-    <None Include="examples\1.Basic\Blink.pde" />
-    <None Include="Makefile" />
-    <None Include="libraries\SerialBus\SerialBus.cpp" />
-    <None Include="libraries\SerialBus\SerialBus.h" />
-    <None Include="examples\1.Basic\AnalogReadSerial.pde" />
-    <None Include="examples\1.Basic\BareMinimum.pde" />
-    <None Include="examples\1.Basic\DigitalReadSerial.pde" />
-    <None Include="examples\1.Basic\Fade.pde" />
-    <None Include="examples\2.Digital\BlinkWithoutDelay.pde" />
-    <None Include="examples\2.Digital\Button.pde" />
-    <None Include="examples\2.Digital\Debounce.pde" />
-    <None Include="examples\2.Digital\StateChangeDetection.pde" />
-    <None Include="examples\2.Digital\pitches.h" />
-    <None Include="examples\2.Digital\toneKeyboard.pde" />
-    <None Include="examples\2.Digital\toneMelody.pde" />
-    <None Include="examples\2.Digital\toneMultiple.pde" />
-    <None Include="examples\2.Digital\tonePitchFollower.pde" />
-    <None Include="examples\3.Analog\AnalogInOutSerial.pde" />
-    <None Include="examples\3.Analog\AnalogInput.pde" />
-    <None Include="examples\3.Analog\AnalogWriteMega.pde" />
-    <None Include="examples\3.Analog\Calibration.pde" />
-    <None Include="examples\3.Analog\Fading.pde" />
-    <None Include="examples\3.Analog\Smoothing.pde" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="cores\" />
-    <Folder Include="cores\arduino\" />
-    <Folder Include="examples\" />
-    <Folder Include="examples\1.Basic\" />
-    <Folder Include="libraries\" />
-    <Folder Include="libraries\SerialBus\" />
-  </ItemGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'atmega168p_20000000|AnyCPU' ">
+    <OutputPath>.</OutputPath>
+  </PropertyGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
-        <MonoDevelop.Autotools.MakefileInfo IntegrationEnabled="true" RelativeMakefileName="Makefile" BuildTargetName="examples" CleanTargetName="">
-          <BuildFilesVar />
+        <MonoDevelop.Autotools.MakefileInfo RelativeMakefileName="Makefile" ExecuteTargetName="run">
+          <BuildFilesVar Sync="true" Name="SOURCES" />
           <DeployFilesVar />
           <ResourcesVar />
-          <OthersVar />
+          <OthersVar Sync="true" Name="SOURCES" />
           <GacRefVar />
           <AsmRefVar />
           <ProjectRefVar />
@@ -73,4 +30,29 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <None Include="Arduino.mk" />
+    <None Include="configs\arduino-config.h" />
+    <None Include="cores\arduino\Print.cpp" />
+    <None Include="cores\arduino\Print.h" />
+    <None Include="cores\arduino\RingBuffer.h" />
+    <None Include="cores\arduino\WProgram.h" />
+    <None Include="cores\arduino\analog.cpp" />
+    <None Include="cores\arduino\analog.h" />
+    <None Include="cores\arduino\digital.cpp" />
+    <None Include="cores\arduino\digital.h" />
+    <None Include="cores\arduino\pde_main.inc" />
+    <None Include="cores\arduino\wiring.cpp" />
+    <None Include="libraries\HardwareSerial\HardwareSerial.cpp" />
+    <None Include="libraries\HardwareSerial\HardwareSerial.h" />
+    <None Include="libraries\PWMMatrix\PWMMatrix.h" />
+    <None Include="libraries\SerialBus\SerialBus.cpp" />
+    <None Include="libraries\SerialBus\SerialBus.h" />
+    <None Include="libraries\Tone\Tone.cpp" />
+    <None Include="libraries\Tone\Tone.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="libraries\Tone\" />
+    <Folder Include="cores\arduino\" />
+  </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 /*
-  UART.h - Hardware UART library for TOARU-duino
+  HardwareSerial.h - Hardware UART library for TOARU-duino
   Copyright (c) 2011 HATTORI, Hiroki.    All rights reserved.
 
   This library is free software; you can redistribute it and/or
@@ -22,8 +22,8 @@
 
 	  Modified 28 September 2010 by Mark Sproul
  */
-#if !defined(ARDUINO__CORE__UART_H)
-#  define ARDUINO__CORE__UART_H
+#if !defined(HardwareSerial_H)
+#  define HardwareSerial_H
 
 #  include <cores/arduino/Print.h>
 #  include <cores/arduino/RingBuffer.h>

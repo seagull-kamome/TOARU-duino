@@ -3,15 +3,44 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "TOARU-duino", "TOARU-duino\TOARU-duino.mdproj", "{3A81BD20-00C9-4C7F-B140-5955C686E425}"
 EndProject
+Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "examples", "examples\examples.mdproj", "{A1A4A4BA-3699-4D65-BD1D-2BC623D75E9B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Default|Any CPU = Default|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3A81BD20-00C9-4C7F-B140-5955C686E425}.Default|Any CPU.ActiveCfg = Default|Any CPU
-		{3A81BD20-00C9-4C7F-B140-5955C686E425}.Default|Any CPU.Build.0 = Default|Any CPU
+		{3A81BD20-00C9-4C7F-B140-5955C686E425}.Default|Any CPU.ActiveCfg = atmega168p_20000000|Any CPU
+		{3A81BD20-00C9-4C7F-B140-5955C686E425}.Default|Any CPU.Build.0 = atmega168p_20000000|Any CPU
+		{A1A4A4BA-3699-4D65-BD1D-2BC623D75E9B}.Default|Any CPU.ActiveCfg = Default|Any CPU
+		{A1A4A4BA-3699-4D65-BD1D-2BC623D75E9B}.Default|Any CPU.Build.0 = Default|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = TOARU-duino\TOARU-duino.mdproj
+		Policies = $0
+		$0.TextStylePolicy = $1
+		$1.FileWidth = 120
+		$1.TabWidth = 4
+		$1.inheritsSet = Mono
+		$1.inheritsScope = text/plain
+		$1.scope = text/plain
+		$0.TextStylePolicy = $2
+		$2.inheritsSet = null
+		$2.scope = text/x-chdr
+		$0.TextStylePolicy = $3
+		$3.inheritsSet = null
+		$3.scope = text/x-c++src
+		$0.TextStylePolicy = $4
+		$4.inheritsSet = null
+		$4.scope = text/x-makefile
+		$0.TextStylePolicy = $5
+		$5.inheritsSet = null
+		$5.scope = application/xml
+		$0.XmlFormattingPolicy = $6
+		$6.inheritsSet = Mono
+		$6.inheritsScope = application/xml
+		$6.scope = application/xml
+		$0.StandardHeader = $7
+		$7.inheritsSet = GPLv2License
 	EndGlobalSection
 EndGlobal

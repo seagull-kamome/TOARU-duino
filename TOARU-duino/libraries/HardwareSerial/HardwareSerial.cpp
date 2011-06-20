@@ -1,5 +1,5 @@
 /*
-  UART.cpp - Hardware UART library for TOARU-duino
+  HardwareSerial.cpp - Hardware UART library for TOARU-duino
   Copyright (c) 2011 HATTORI, Hiroki.    All rights reserved.
 
   This library is free software; you can redistribute it and/or
@@ -17,7 +17,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include <cores/arduino/WProgram.h>
-#include <cores/arduino/UART.h>
+#include <HardwareSerial.h>
 
 Uart0 Serial;
 

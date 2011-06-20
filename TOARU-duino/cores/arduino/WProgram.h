@@ -24,6 +24,9 @@
 #ifndef WPROGRAM_H
 #  define WPROGRAM_H
 
+#  include <avr/io.h>
+
+
 #  define clockCyclesPerMicrosecond()		( F_CPU / 1000000L )
 #  define clockCyclesToMicroseconds(x)		( (x) / clockCyclesPerMicrosecond() )
 #  define microsecondsToClockCycles(x)	( (x) * clockCyclesPerMicrosecond() )
@@ -42,7 +45,7 @@ enum { CHANGE = 1, FALLING = 2, RISING = 3 };
 template <typename T> static inline T min(T const& a, T const& b) { return a < b? a : b; }
 template <typename T> static inline T max(T const& a, T const& b) { return a > b? a : b; }
 template <typename T> static inline T abs(T const& a) { return a > 0? a : -a; }
-template <typename T> static inline T constraint(T const& x, T const& l, T const& h)
+template <typename T> static inline T constrain(T const& x, T const& l, T const& h)
 { return (x < l)? l : (x > h)? h : x; }
 static inline double round(double const& x) { return (x >= 0)? (long)(x + 0.5) : (long)(x - 0.5); }
 static inline float round(float const& x) { return (x >= 0)? (long)(x + 0.5) : (long)(x - 0.5); }
@@ -111,7 +114,7 @@ T __inline__ map(T x, T n, T m, T nn, T mm)
 
 #  include <cores/arduino/digital.h>
 #  include <cores/arduino/analog.h>
-#  include <cores/arduino/UART.h>
+#  include <arduino-config.h>
 
 #endif
 

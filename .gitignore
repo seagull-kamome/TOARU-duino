@@ -1,0 +1,5 @@
+atmega168p_20000000
+examples/atmega168p_20000000
+*.pidb
+*.userprefs
+
