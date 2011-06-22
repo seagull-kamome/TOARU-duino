@@ -6,34 +6,32 @@
     <ItemType>GenericProject</ItemType>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A1A4A4BA-3699-4D65-BD1D-2BC623D75E9B}</ProjectGuid>
+    <ProjectGuid>{79515298-4D2E-4686-936E-20F4B6A213E1}</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Default|AnyCPU' ">
     <OutputPath>.</OutputPath>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="BeforeBuild" command="make depends" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="HardwareSerial\HardwareSerial.cpp" />
+    <None Include="HardwareSerial\HardwareSerial.h" />
+    <None Include="PWMMatrix\PWMMatrix.h" />
+    <None Include="SerialBus\SerialBus.cpp" />
+    <None Include="SerialBus\SerialBus.h" />
+    <None Include="Tone\Tone.cpp" />
+    <None Include="Tone\Tone.h" />
+    <None Include="LiquidCrystal\keywords.txt" />
+    <None Include="LiquidCrystal\LiquidCrystal.h" />
+    <None Include="LiquidCrystal\LiquidCrystal.cpp" />
+    <None Include="LiquidCrystal\examples\setCursor.pde" />
+    <None Include="LiquidCrystal\examples\TextDirection.pde" />
+    <None Include="LiquidCrystal\examples\SerialDisplay.pde" />
+    <None Include="LiquidCrystal\examples\Scroll.pde" />
+    <None Include="LiquidCrystal\examples\HelloWorld.pde" />
+    <None Include="LiquidCrystal\examples\Display.pde" />
+    <None Include="LiquidCrystal\examples\Cursor.pde" />
+    <None Include="LiquidCrystal\examples\Blink.pde" />
+    <None Include="LiquidCrystal\examples\Autoscroll.pde" />
     <None Include="Makefile" />
-    <None Include="1.Basic\AnalogReadSerial.pde" />
-    <None Include="1.Basic\BareMinimum.pde" />
-    <None Include="1.Basic\Blink.pde" />
-    <None Include="1.Basic\DigitalReadSerial.pde" />
-    <None Include="1.Basic\Fade.pde" />
-    <None Include="2.Digital\BlinkWithoutDelay.pde" />
-    <None Include="2.Digital\Button.pde" />
-    <None Include="2.Digital\Debounce.pde" />
-    <None Include="2.Digital\StateChangeDetection.pde" />
-    <None Include="2.Digital\pitches.h" />
-    <None Include="3.Analog\AnalogInOutSerial.pde" />
-    <None Include="3.Analog\AnalogInput.pde" />
-    <None Include="3.Analog\AnalogWriteMega.pde" />
-    <None Include="3.Analog\Calibration.pde" />
-    <None Include="3.Analog\Fading.pde" />
-    <None Include="3.Analog\Smoothing.pde" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -46,7 +44,6 @@
           <GacRefVar />
           <AsmRefVar />
           <ProjectRefVar />
-          <MessageRegex Name="gcc" />
         </MonoDevelop.Autotools.MakefileInfo>
       </Properties>
     </MonoDevelop>

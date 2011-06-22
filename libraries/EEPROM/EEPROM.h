@@ -1,6 +1,6 @@
 /*
-  HardwareSerial.cpp - Hardware UART library for TOARU-duino
-  Copyright (c) 2011 HATTORI, Hiroki.    All rights reserved.
+  EEPROM.h - EEPROM library
+  Copyright (c) 2006 David A. Mellis.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,16 +15,21 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- */
-#include <cores/arduino/WProgram.h>
-#include <HardwareSerial.h>
+*/
 
-Uart0 Serial;
+#ifndef EEPROM_h
+#define EEPROM_h
 
-SIGNAL(USART_RX_vect)
+#include <inttypes.h>
+
+class EEPROMClass
 {
-	Serial.rx_buf.emit(UDR0);
-}
+  public:
+    uint8_t read(int);
+    void write(int, uint8_t);
+};
 
+extern EEPROMClass EEPROM;
 
+#endif
 

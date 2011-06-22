@@ -35,7 +35,7 @@ public:
 	enum { TX_PIN = 0, RX_PIN = 1, RX_BUFFER_SIZE=128 };
 
 
-	static __inline__ bool calcBaud(int baud, uint16_t* baud_setting)
+	static __inline__ bool calcBaud(unsigned long baud, uint16_t* baud_setting)
 	{
 		bool use_u2x = true;
 #  if F_CPU == 16000000L
@@ -62,15 +62,20 @@ public:
 		if (rx_buf.isEmpty()) return -1;
 		return (int)rx_buf.pull();
 	}
-	
+
+protected:
 	RingBuffer<RX_BUFFER_SIZE> rx_buf;
 };
 
 
+extern "C" void USART_RX_vect();
+
 class Uart0 : public Uart
 {
+	friend void USART_RX_vect();
+
 public:
-	void __inline__ begin(uint8_t baud)
+	void __inline__ begin(unsigned long baud)
 	{
 		uint16_t baud_setting;
 		UCSR0A = ((calcBaud(baud, &baud_setting)?1:0) << U2X0);
@@ -79,7 +84,7 @@ public:
 		UCSR0B |= (1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0);
 	}
 
-	inline void end()
+	void __inline__ end()
 	{
 		UCSR0B &= ~((1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0));
 	}

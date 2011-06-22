@@ -2,12 +2,12 @@
 MCU=atmega168p
 F_CPU=20000000
 
-ARDUINO_DIR=../TOARU-duino
+ARDUINO_DIR=..
 ARDUINO_PORT='/dev/ttyACM*'
 AVRDUDE_ARD_BAUDRATE=115200
 AVRDUDE_ARD_PROGRAMMER=arduino
 
-OUTPUTDIR=../$(MCU)_$(F_CPU)
+OUTPUTDIR=../$(MCU)_$(F_CPU)/examples
 
 SOURCES =  \
 	1.Basic/AnalogReadSerial.pde \

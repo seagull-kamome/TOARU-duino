@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Default</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ItemType>GenericProject</ItemType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4CDE205B-6978-4606-9AE6-264245B86492}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Default|AnyCPU' ">
+    <OutputPath>.</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="arduino\Print.cpp" />
+    <None Include="arduino\Print.h" />
+    <None Include="arduino\RingBuffer.h" />
+    <None Include="arduino\WProgram.h" />
+    <None Include="arduino\analog.cpp" />
+    <None Include="arduino\analog.h" />
+    <None Include="arduino\digital.cpp" />
+    <None Include="arduino\digital.h" />
+    <None Include="arduino\pde_main.inc" />
+    <None Include="arduino\wiring.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="arduino\" />
+  </ItemGroup>
+</Project>

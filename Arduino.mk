@@ -20,7 +20,7 @@ ECHO    = echo
 
 
 CPPFLAGS	= -mmcu=$(MCU) -DF_CPU=$(F_CPU) \
-	-I. -I$(ARDUINO_DIR) -I$(ARDUINO_DIR)/configs $(addprefix -I,$(LIB_DIRS)) \
+	-I. -I$(ARDUINO_DIR) $(addprefix -I,$(LIB_DIRS)) \
 	-g -O99 -Os -w -Wall \
 	-ffunction-sections -fdata-sections
 CFLAGS        = -std=gnu99
@@ -41,9 +41,9 @@ endif
 
 
 PDE_SOURCES=$(filter %.pde,$(SOURCES))
-C_SOURCES=$(filter %.c,$(SOURCES))
-CXX_SOURCES=$(filter %.cpp,$(SOURCES))
-ASM_SOURCES=$(filter $.s,$(SOURCES))
+#C_SOURCES=$(filter %.c,$(SOURCES))
+#CXX_SOURCES=$(filter %.cpp,$(SOURCES))
+#ASM_SOURCES=$(filter $.s,$(SOURCES))
 
 SOURCE_DIRS=$(sort $(dir $(PDE_SOURCES) $(C_SOURCES) $(CXX_SOURCES) $(ASM_SOURCES)))
 
@@ -68,7 +68,6 @@ DEP_FILES=$(CORE_OBJS:.o=.d) $(LIB_OBJS:.o=.d) $(addprefix $(OBJDIR)/,$(PDE_SOUR
 OBJS=$(CORE_OBJS) $(LIB_OBJS) $(addprefix $(OBJDIR)/,$(PDE_SOURCES:.pde=.o) $(C_SOURCES:.c=.o) $(CXX_SOURCES:.cpp=.o) $(ASM_SOURCES:.S=.o))
 
 all: $(OBJS) $(ELFS) $(IHEXS) $(EEPROMS)
-
 clean:
 	$(RM) -rf $(OBJDIR)
 	$(RM) $(IHEXS) $(EEPROMS)
