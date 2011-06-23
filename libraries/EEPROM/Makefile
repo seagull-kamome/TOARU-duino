@@ -13,9 +13,9 @@ OUTPUTDIR=../$(MCU)_$(F_CPU)/libraries/EEPROM
 SOURCES =  \
 	EEPROM.cpp \
 	EEPROM.h \
-	examples/eeprom_clear/eeprom_clear.pde \
-	examples/eeprom_read/eeprom_read.pde \
-	examples/eeprom_write/eeprom_write.pde \
+	examples/eeprom_clear.pde \
+	examples/eeprom_read.pde \
+	examples/eeprom_write.pde \
 	keywords.txt \
 	Makefile
 

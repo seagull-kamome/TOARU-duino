@@ -9,16 +9,16 @@
     <ProjectGuid>{C3F5EDC2-9D1C-45A2-A73A-BB871BF0F01D}</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Default|AnyCPU' ">
-    <OutputPath>.\</OutputPath>
+    <OutputPath>.</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <None Include="Makefile" />
     <None Include="keywords.txt" />
     <None Include="EEPROM.h" />
     <None Include="EEPROM.cpp" />
-    <None Include="examples\eeprom_write\eeprom_write.pde" />
-    <None Include="examples\eeprom_read\eeprom_read.pde" />
-    <None Include="examples\eeprom_clear\eeprom_clear.pde" />
+    <None Include="examples\eeprom_clear.pde" />
+    <None Include="examples\eeprom_read.pde" />
+    <None Include="examples\eeprom_write.pde" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
