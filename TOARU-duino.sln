@@ -24,6 +24,8 @@ Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "PWMMatrix", "libraries\PWMM
 EndProject
 Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "SoftwareSerial", "libraries\SoftwareSerial\SoftwareSerial.mdproj", "{0AF72589-2C3A-4C6D-AC9D-2EA6A7A08B01}"
 EndProject
+Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "Dots", "libraries\Dots\Dots.mdproj", "{2EC9ACFB-404A-4444-A704-8DB87F02D2C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Default|Any CPU = Default|Any CPU
@@ -33,6 +35,8 @@ Global
 		{0AF72589-2C3A-4C6D-AC9D-2EA6A7A08B01}.Default|Any CPU.Build.0 = Default|Any CPU
 		{189B5553-EC68-48EB-9D33-AE1824750FA9}.Default|Any CPU.ActiveCfg = Default|Any CPU
 		{189B5553-EC68-48EB-9D33-AE1824750FA9}.Default|Any CPU.Build.0 = Default|Any CPU
+		{2EC9ACFB-404A-4444-A704-8DB87F02D2C9}.Default|Any CPU.ActiveCfg = Default|Any CPU
+		{2EC9ACFB-404A-4444-A704-8DB87F02D2C9}.Default|Any CPU.Build.0 = Default|Any CPU
 		{335BB5AF-6F0F-452E-A666-B0F3292CB604}.Default|Any CPU.ActiveCfg = Default|Any CPU
 		{335BB5AF-6F0F-452E-A666-B0F3292CB604}.Default|Any CPU.Build.0 = Default|Any CPU
 		{4CDE205B-6978-4606-9AE6-264245B86492}.Default|Any CPU.ActiveCfg = Default|Any CPU
@@ -50,6 +54,7 @@ Global
 		{D7C4148D-B869-42BD-8CF8-3E304A642A2A} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
 		{189B5553-EC68-48EB-9D33-AE1824750FA9} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
 		{0AF72589-2C3A-4C6D-AC9D-2EA6A7A08B01} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
+		{2EC9ACFB-404A-4444-A704-8DB87F02D2C9} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = examples\examples.mdproj
