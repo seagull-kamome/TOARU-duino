@@ -4,7 +4,6 @@ AVR_TOOLS_PATH    = /usr/bin
 ARDUINO_ETC_PATH  = /etc
 AVRDUDE_CONF     = $(ARDUINO_ETC_PATH)/avrdude.conf
 
-ARDUINO_LIBS+=HardwareSerial
 
 CC      = $(AVR_TOOLS_PATH)/avr-gcc
 CXX     = $(AVR_TOOLS_PATH)/avr-g++

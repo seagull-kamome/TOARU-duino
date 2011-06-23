@@ -18,6 +18,8 @@ Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "EEPROM", "libraries\EEPROM\
 EndProject
 Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "HardwareSerial", "libraries\HardwareSerial\HardwareSerial.mdproj", "{335BB5AF-6F0F-452E-A666-B0F3292CB604}"
 EndProject
+Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "LiquidCrystal", "libraries\LiquidCrystal\LiquidCrystal.mdproj", "{D7C4148D-B869-42BD-8CF8-3E304A642A2A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Default|Any CPU = Default|Any CPU
@@ -31,10 +33,13 @@ Global
 		{A1A4A4BA-3699-4D65-BD1D-2BC623D75E9B}.Default|Any CPU.Build.0 = Default|Any CPU
 		{C3F5EDC2-9D1C-45A2-A73A-BB871BF0F01D}.Default|Any CPU.ActiveCfg = Default|Any CPU
 		{C3F5EDC2-9D1C-45A2-A73A-BB871BF0F01D}.Default|Any CPU.Build.0 = Default|Any CPU
+		{D7C4148D-B869-42BD-8CF8-3E304A642A2A}.Default|Any CPU.ActiveCfg = Default|Any CPU
+		{D7C4148D-B869-42BD-8CF8-3E304A642A2A}.Default|Any CPU.Build.0 = Default|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C3F5EDC2-9D1C-45A2-A73A-BB871BF0F01D} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
 		{335BB5AF-6F0F-452E-A666-B0F3292CB604} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
+		{D7C4148D-B869-42BD-8CF8-3E304A642A2A} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = examples\examples.mdproj
