@@ -12,16 +12,12 @@
     <OutputPath>.</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="HardwareSerial\HardwareSerial.cpp" />
     <None Include="HardwareSerial\HardwareSerial.h" />
     <None Include="PWMMatrix\PWMMatrix.h" />
-    <None Include="SerialBus\SerialBus.cpp" />
     <None Include="SerialBus\SerialBus.h" />
-    <None Include="Tone\Tone.cpp" />
     <None Include="Tone\Tone.h" />
     <None Include="LiquidCrystal\keywords.txt" />
     <None Include="LiquidCrystal\LiquidCrystal.h" />
-    <None Include="LiquidCrystal\LiquidCrystal.cpp" />
     <None Include="LiquidCrystal\examples\setCursor.pde" />
     <None Include="LiquidCrystal\examples\TextDirection.pde" />
     <None Include="LiquidCrystal\examples\SerialDisplay.pde" />
@@ -32,6 +28,12 @@
     <None Include="LiquidCrystal\examples\Blink.pde" />
     <None Include="LiquidCrystal\examples\Autoscroll.pde" />
     <None Include="Makefile" />
+    <None Include="EEPROM\keywords.txt" />
+    <None Include="EEPROM\EEPROM.h" />
+    <None Include="EEPROM\EEPROM.cpp" />
+    <None Include="EEPROM\examples\eeprom_write\eeprom_write.pde" />
+    <None Include="EEPROM\examples\eeprom_read\eeprom_read.pde" />
+    <None Include="EEPROM\examples\eeprom_clear\eeprom_clear.pde" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

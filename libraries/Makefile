@@ -11,7 +11,12 @@ ARDUINO_LIBS:=LiquidCrystal
 OUTPUTDIR=../$(MCU)_$(F_CPU)/libraries
 
 SOURCES =  \
-	HardwareSerial/HardwareSerial.cpp \
+	EEPROM/EEPROM.cpp \
+	EEPROM/EEPROM.h \
+	EEPROM/examples/eeprom_clear/eeprom_clear.pde \
+	EEPROM/examples/eeprom_read/eeprom_read.pde \
+	EEPROM/examples/eeprom_write/eeprom_write.pde \
+	EEPROM/keywords.txt \
 	HardwareSerial/HardwareSerial.h \
 	LiquidCrystal/examples/Autoscroll.pde \
 	LiquidCrystal/examples/Blink.pde \
@@ -23,13 +28,10 @@ SOURCES =  \
 	LiquidCrystal/examples/setCursor.pde \
 	LiquidCrystal/examples/TextDirection.pde \
 	LiquidCrystal/keywords.txt \
-	LiquidCrystal/LiquidCrystal.cpp \
 	LiquidCrystal/LiquidCrystal.h \
 	Makefile \
 	PWMMatrix/PWMMatrix.h \
-	SerialBus/SerialBus.cpp \
 	SerialBus/SerialBus.h \
-	Tone/Tone.cpp \
 	Tone/Tone.h
 
 include $(ARDUINO_DIR)/Arduino.mk

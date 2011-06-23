@@ -20,7 +20,7 @@ ECHO    = echo
 
 
 CPPFLAGS	= -mmcu=$(MCU) -DF_CPU=$(F_CPU) \
-	-I. -I$(ARDUINO_DIR) $(addprefix -I,$(LIB_DIRS)) \
+	-I. -I$(ARDUINO_DIR) -I$(ARDUINO_DIR)/cores/arduino $(addprefix -I,$(LIB_DIRS)) \
 	-g -O99 -Os -w -Wall \
 	-ffunction-sections -fdata-sections
 CFLAGS        = -std=gnu99
@@ -41,11 +41,11 @@ endif
 
 
 PDE_SOURCES=$(filter %.pde,$(SOURCES))
-#C_SOURCES=$(filter %.c,$(SOURCES))
-#CXX_SOURCES=$(filter %.cpp,$(SOURCES))
-#ASM_SOURCES=$(filter $.s,$(SOURCES))
 
-SOURCE_DIRS=$(sort $(dir $(PDE_SOURCES) $(C_SOURCES) $(CXX_SOURCES) $(ASM_SOURCES)))
+SOURCE_DIRS=$(sort $(dir $(PDE_SOURCES)))
+C_SOURCES=$(foreach dir,$(SOURCE_DIRS), $(wildcard $(dir)/*.c))
+CPP_SOURCES=$(foreach dir,$(SOURCE_DIRS), $(wildcard $(dir)/*.cpp))
+ASM_SOURCES=$(foreach dir,$(SOURCE_DIRS), $(wildcard $(dir)/*.S))
 
 ELFS=$(addprefix $(OBJDIR)/,$(PDE_SOURCES:.pde=.elf))
 IHEXS=$(addprefix $(OUTPUTDIR)/,$(PDE_SOURCES:.pde=.hex))
@@ -130,7 +130,8 @@ $(OBJDIR)/%.d : %.S
 # Linking
 #
 $(OBJDIR)/%.elf : $(OBJDIR)/%.o $(CORE_OBJS) $(LIB_OBJS)
-	$(CC) $(LDFLAGS) -o $@ $< $(CORE_OBJS) $(LIB_OBJS)
+	$(CC) $(LDFLAGS) -o $@ $< $(wildcard $(dir $(%).pde)/*.c:.c=.o) $(wildcard $(dir $(%).pde)/*.cpp:.cpp=.o) $(wildcard $(dir $(%).pde)/*.S:.S=.o) \
+		$(CORE_OBJS) $(LIB_OBJS)
 
 
 #

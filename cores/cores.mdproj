@@ -22,6 +22,7 @@
     <None Include="arduino\digital.h" />
     <None Include="arduino\pde_main.inc" />
     <None Include="arduino\wiring.cpp" />
+    <None Include="arduino\WConstants.h" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="arduino\" />

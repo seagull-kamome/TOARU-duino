@@ -112,6 +112,14 @@ T __inline__ map(T x, T n, T m, T nn, T mm)
 	return (x - n) * (mm - nn) / (m - n + nn);
 }
 
+
+#  include <stdint.h>
+typedef uint8_t byte;
+typedef uint16_t word;
+typedef uint32_t dword;
+
+
+
 #  include <cores/arduino/digital.h>
 #  include <cores/arduino/analog.h>
 #  include <arduino-config.h>
