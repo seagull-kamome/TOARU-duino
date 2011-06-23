@@ -20,11 +20,15 @@ Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "HardwareSerial", "libraries
 EndProject
 Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "LiquidCrystal", "libraries\LiquidCrystal\LiquidCrystal.mdproj", "{D7C4148D-B869-42BD-8CF8-3E304A642A2A}"
 EndProject
+Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "PWMMatrix", "libraries\PWMMatrix\PWMMatrix.mdproj", "{189B5553-EC68-48EB-9D33-AE1824750FA9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Default|Any CPU = Default|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{189B5553-EC68-48EB-9D33-AE1824750FA9}.Default|Any CPU.ActiveCfg = Default|Any CPU
+		{189B5553-EC68-48EB-9D33-AE1824750FA9}.Default|Any CPU.Build.0 = Default|Any CPU
 		{335BB5AF-6F0F-452E-A666-B0F3292CB604}.Default|Any CPU.ActiveCfg = Default|Any CPU
 		{335BB5AF-6F0F-452E-A666-B0F3292CB604}.Default|Any CPU.Build.0 = Default|Any CPU
 		{4CDE205B-6978-4606-9AE6-264245B86492}.Default|Any CPU.ActiveCfg = Default|Any CPU
@@ -40,6 +44,7 @@ Global
 		{C3F5EDC2-9D1C-45A2-A73A-BB871BF0F01D} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
 		{335BB5AF-6F0F-452E-A666-B0F3292CB604} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
 		{D7C4148D-B869-42BD-8CF8-3E304A642A2A} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
+		{189B5553-EC68-48EB-9D33-AE1824750FA9} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = examples\examples.mdproj
