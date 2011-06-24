@@ -1,89 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "examples", "examples\examples.mdproj", "{A1A4A4BA-3699-4D65-BD1D-2BC623D75E9B}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9C08FF15-F731-4B7B-863D-FC7926E8D1B3}"
-	ProjectSection(SolutionItems) = preProject
-		Arduino.mk = Arduino.mk
-		arduino-config.h = arduino-config.h
-		README = README
-		arduino-upload = arduino-upload
-	EndProjectSection
-EndProject
-Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "cores", "cores\cores.mdproj", "{4CDE205B-6978-4606-9AE6-264245B86492}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libraries", "libraries", "{77B753A2-DBE1-4197-8EC7-699BF788B785}"
-EndProject
-Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "EEPROM", "libraries\EEPROM\EEPROM.mdproj", "{C3F5EDC2-9D1C-45A2-A73A-BB871BF0F01D}"
-EndProject
-Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "HardwareSerial", "libraries\HardwareSerial\HardwareSerial.mdproj", "{335BB5AF-6F0F-452E-A666-B0F3292CB604}"
-EndProject
-Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "LiquidCrystal", "libraries\LiquidCrystal\LiquidCrystal.mdproj", "{D7C4148D-B869-42BD-8CF8-3E304A642A2A}"
-EndProject
-Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "PWMMatrix", "libraries\PWMMatrix\PWMMatrix.mdproj", "{189B5553-EC68-48EB-9D33-AE1824750FA9}"
-EndProject
-Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "SoftwareSerial", "libraries\SoftwareSerial\SoftwareSerial.mdproj", "{0AF72589-2C3A-4C6D-AC9D-2EA6A7A08B01}"
-EndProject
-Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "Dots", "libraries\Dots\Dots.mdproj", "{2EC9ACFB-404A-4444-A704-8DB87F02D2C9}"
+Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "TOARU-duino", "TOARU-duino.mdproj", "{488878BB-6DD4-4E36-980B-E3DA0E7A272E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Default|Any CPU = Default|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0AF72589-2C3A-4C6D-AC9D-2EA6A7A08B01}.Default|Any CPU.ActiveCfg = Default|Any CPU
-		{0AF72589-2C3A-4C6D-AC9D-2EA6A7A08B01}.Default|Any CPU.Build.0 = Default|Any CPU
-		{189B5553-EC68-48EB-9D33-AE1824750FA9}.Default|Any CPU.ActiveCfg = Default|Any CPU
-		{189B5553-EC68-48EB-9D33-AE1824750FA9}.Default|Any CPU.Build.0 = Default|Any CPU
-		{2EC9ACFB-404A-4444-A704-8DB87F02D2C9}.Default|Any CPU.ActiveCfg = Default|Any CPU
-		{2EC9ACFB-404A-4444-A704-8DB87F02D2C9}.Default|Any CPU.Build.0 = Default|Any CPU
-		{335BB5AF-6F0F-452E-A666-B0F3292CB604}.Default|Any CPU.ActiveCfg = Default|Any CPU
-		{335BB5AF-6F0F-452E-A666-B0F3292CB604}.Default|Any CPU.Build.0 = Default|Any CPU
-		{4CDE205B-6978-4606-9AE6-264245B86492}.Default|Any CPU.ActiveCfg = Default|Any CPU
-		{4CDE205B-6978-4606-9AE6-264245B86492}.Default|Any CPU.Build.0 = Default|Any CPU
-		{A1A4A4BA-3699-4D65-BD1D-2BC623D75E9B}.Default|Any CPU.ActiveCfg = Default|Any CPU
-		{A1A4A4BA-3699-4D65-BD1D-2BC623D75E9B}.Default|Any CPU.Build.0 = Default|Any CPU
-		{C3F5EDC2-9D1C-45A2-A73A-BB871BF0F01D}.Default|Any CPU.ActiveCfg = Default|Any CPU
-		{C3F5EDC2-9D1C-45A2-A73A-BB871BF0F01D}.Default|Any CPU.Build.0 = Default|Any CPU
-		{D7C4148D-B869-42BD-8CF8-3E304A642A2A}.Default|Any CPU.ActiveCfg = Default|Any CPU
-		{D7C4148D-B869-42BD-8CF8-3E304A642A2A}.Default|Any CPU.Build.0 = Default|Any CPU
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{C3F5EDC2-9D1C-45A2-A73A-BB871BF0F01D} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
-		{335BB5AF-6F0F-452E-A666-B0F3292CB604} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
-		{D7C4148D-B869-42BD-8CF8-3E304A642A2A} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
-		{189B5553-EC68-48EB-9D33-AE1824750FA9} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
-		{0AF72589-2C3A-4C6D-AC9D-2EA6A7A08B01} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
-		{2EC9ACFB-404A-4444-A704-8DB87F02D2C9} = {77B753A2-DBE1-4197-8EC7-699BF788B785}
+		{488878BB-6DD4-4E36-980B-E3DA0E7A272E}.Default|Any CPU.ActiveCfg = Default|Any CPU
+		{488878BB-6DD4-4E36-980B-E3DA0E7A272E}.Default|Any CPU.Build.0 = Default|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = examples\examples.mdproj
-		Policies = $0
-		$0.TextStylePolicy = $1
-		$1.FileWidth = 120
-		$1.TabWidth = 4
-		$1.inheritsSet = Mono
-		$1.inheritsScope = text/plain
-		$1.scope = text/plain
-		$0.TextStylePolicy = $2
-		$2.inheritsSet = null
-		$2.scope = text/x-chdr
-		$0.TextStylePolicy = $3
-		$3.inheritsSet = null
-		$3.scope = text/x-c++src
-		$0.TextStylePolicy = $4
-		$4.inheritsSet = null
-		$4.scope = text/x-makefile
-		$0.TextStylePolicy = $5
-		$5.inheritsSet = null
-		$5.scope = application/xml
-		$0.XmlFormattingPolicy = $6
-		$6.inheritsSet = Mono
-		$6.inheritsScope = application/xml
-		$6.scope = application/xml
-		$0.StandardHeader = $7
-		$7.inheritsSet = GPLv2License
-		outputpath = atmega168p_20000000
+		StartupItem = TOARU-duino.mdproj
 	EndGlobalSection
 EndGlobal

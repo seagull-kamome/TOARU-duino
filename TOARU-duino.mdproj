@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Default</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ItemType>GenericProject</ItemType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{488878BB-6DD4-4E36-980B-E3DA0E7A272E}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Default|AnyCPU' ">
+    <OutputPath>.\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="pdelibs.sed" />
+    <None Include="arduino-upload" />
+    <None Include="arduino-config.h" />
+    <None Include="README" />
+    <None Include="Arduino.mk" />
+    <None Include="cores\arduino\wiring.cpp" />
+    <None Include="cores\arduino\pde_main.inc" />
+    <None Include="cores\arduino\digital.h" />
+    <None Include="cores\arduino\digital.cpp" />
+    <None Include="cores\arduino\analog.h" />
+    <None Include="cores\arduino\analog.cpp" />
+    <None Include="cores\arduino\WProgram.h" />
+    <None Include="cores\arduino\WConstants.h" />
+    <None Include="cores\arduino\RingBuffer.h" />
+    <None Include="cores\arduino\Print.h" />
+    <None Include="cores\arduino\Print.cpp" />
+    <None Include="examples\3.Analog\Smoothing.pde" />
+    <None Include="examples\3.Analog\Fading.pde" />
+    <None Include="examples\3.Analog\Calibration.pde" />
+    <None Include="examples\3.Analog\AnalogWriteMega.pde" />
+    <None Include="examples\3.Analog\AnalogInput.pde" />
+    <None Include="examples\3.Analog\AnalogInOutSerial.pde" />
+    <None Include="examples\2.Digital\tonePitchFollower.pde" />
+    <None Include="examples\2.Digital\toneMultiple.pde" />
+    <None Include="examples\2.Digital\toneMelody.pde" />
+    <None Include="examples\2.Digital\toneKeyboard.pde" />
+    <None Include="examples\2.Digital\pitches.h" />
+    <None Include="examples\2.Digital\StateChangeDetection.pde" />
+    <None Include="examples\2.Digital\Debounce.pde" />
+    <None Include="examples\2.Digital\Button.pde" />
+    <None Include="examples\2.Digital\BlinkWithoutDelay.pde" />
+    <None Include="examples\1.Basic\Fade.pde" />
+    <None Include="examples\1.Basic\DigitalReadSerial.pde" />
+    <None Include="examples\1.Basic\Blink.pde" />
+    <None Include="examples\1.Basic\BareMinimum.pde" />
+    <None Include="examples\1.Basic\AnalogReadSerial.pde" />
+    <None Include="libraries\Tone\Tone.h" />
+    <None Include="libraries\Tone\Tone.cpp" />
+    <None Include="libraries\SoftwareSerial\keywords.txt" />
+    <None Include="libraries\SoftwareSerial\SoftwareSerial.h" />
+    <None Include="libraries\SoftwareSerial\SoftwareSerial.cpp" />
+    <None Include="libraries\SerialBus\SerialBus.h" />
+    <None Include="libraries\SerialBus\SerialBus.cpp" />
+    <None Include="libraries\PWMMatrix\PWMMatrix.h" />
+    <None Include="libraries\PWMMatrix\Makefile" />
+    <None Include="libraries\LiquidCrystal\keywords.txt" />
+    <None Include="libraries\LiquidCrystal\LiquidCrystal.h" />
+    <None Include="libraries\LiquidCrystal\LiquidCrystal.cpp" />
+    <None Include="libraries\LiquidCrystal\examples\setCursor.pde" />
+    <None Include="libraries\LiquidCrystal\examples\TextDirection.pde" />
+    <None Include="libraries\LiquidCrystal\examples\SerialDisplay.pde" />
+    <None Include="libraries\LiquidCrystal\examples\Scroll.pde" />
+    <None Include="libraries\LiquidCrystal\examples\HelloWorld.pde" />
+    <None Include="libraries\LiquidCrystal\examples\Display.pde" />
+    <None Include="libraries\LiquidCrystal\examples\Cursor.pde" />
+    <None Include="libraries\LiquidCrystal\examples\Blink.pde" />
+    <None Include="libraries\LiquidCrystal\examples\Autoscroll.pde" />
+    <None Include="libraries\HardwareSerial\HardwareSerial.h" />
+    <None Include="libraries\HardwareSerial\HardwareSerial.cpp" />
+    <None Include="libraries\EEPROM\keywords.txt" />
+    <None Include="libraries\EEPROM\EEPROM.h" />
+    <None Include="libraries\EEPROM\EEPROM.cpp" />
+    <None Include="libraries\EEPROM\examples\eeprom_write.pde" />
+    <None Include="libraries\EEPROM\examples\eeprom_read.pde" />
+    <None Include="libraries\EEPROM\examples\eeprom_clear.pde" />
+    <None Include="libraries\Dots\keywords.txt" />
+    <None Include="libraries\Dots\Dots.h" />
+    <None Include="libraries\Dots\Dots.cpp" />
+    <None Include="libraries\Dots\examples\wave_animation.pde" />
+    <None Include="libraries\Dots\examples\scroll_animation.pde" />
+    <None Include="libraries\Dots\examples\inverder.pde" />
+    <None Include="libraries\Dots\examples\hello_matrix.pde" />
+    <None Include="libraries\Dots\examples\heartbeat.pde" />
+    <None Include="libraries\Dots\examples\flip_animation.pde" />
+    <None Include="libraries\DataLoggerShield\pff.h" />
+    <None Include="libraries\DataLoggerShield\pff.cpp" />
+    <None Include="libraries\DataLoggerShield\mmc.cpp" />
+    <None Include="libraries\DataLoggerShield\integer.h" />
+    <None Include="libraries\DataLoggerShield\diskio.h" />
+    <None Include="libraries\DataLoggerShield\SerialBUS.h" />
+    <None Include="libraries\DataLoggerShield\SerialBUS.cpp" />
+    <None Include="libraries\DataLoggerShield\RTC4543.h" />
+    <None Include="libraries\DataLoggerShield\Makefile" />
+    <None Include="libraries\DataLoggerShield\DataLogger.h" />
+    <None Include="libraries\DataLoggerShield\DataLogger.cpp" />
+    <None Include="libraries\DataLoggerShield\examples\DataLoggerTest.pde" />
+  </ItemGroup>
+</Project>
