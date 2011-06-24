@@ -72,9 +72,11 @@ case $ARDUINO_BOARD in
 		;;
 esac
 
-CFLAGS=-"mmcu=$MCU -DF_CPU=$F_CPU -std=gnu99 -I. -I$ARDUINO_DIR -I$ARDUINO_DIR/cores/arduino -g -O99 -Os -w -Wall -ffunction-sections -fdata-sections"
+CPPFLAGS="-mmcu=$MCU -DF_CPU=$F_CPU -std=gnu99 -I. -I$ARDUINO_DIR -I$ARDUINO_DIR/cores/arduino"
+CFLAGS="$CPPFLAGS -std=gnu99 -I. -I$ARDUINO_DIR -I$ARDUINO_DIR/cores/arduino -g -O99 -Os -w -Wall -ffunction-sections -fdata-sections"
 CXXFLAGS="$CFLAGS -fno-exceptions"
 PDEFLAGS="$CXXFLAGS -xc++ -include cores/arduino/pde_main.inc"
+ASFLAGS="$CPPFLAGS -x assembler-with-cpp"
 LDFLAGS="-mmcu=$MCU -lm -Wl,--gc-sections -Os"
 
 
@@ -116,12 +118,37 @@ for f in $ARDUINO_DIR/cores/arduino/*.cpp; do
 done
 
 
+
 #
 # Build PDE
 #
+PDE_DIR=`dirname $PDE_FILE`
+OTHER_OBJS=
+for f in `ls -1 $PDE_DIR`; do
+  OBJNAME=`echo $f|sed -e "s!$PDE_DIR!!" -e "s!\.cpp!.o!" -e "s!\.c!.o!" -e "s!\.S!.o!"`
+  if [ "$f" -nt "$OBJDIR/$OBJNAME" -o ! -e "$OBJDIR/$OBJNAME" ]; then
+    case `echo $f | sed -e 's!.*\.\(cpp\|c\|S\)$!\1!'` in
+    "cpp")
+    	avr-gcc  $CXXFLAGS $LIBINC -c -o "$OBJDIR/$OBJNAME" "$f"
+  		OTHER_OBJS="$OTHER_OBJS $OBJNAME"
+  		;;
+    "c")
+    	avr-gcc  $CFLAGS $LIBINC -c -o "$OBJDIR/$OBJNAME" "$f"
+  		OTHER_OBJS="$OTHER_OBJS $OBJNAME"
+  		;;
+    "S")
+    	avr-gcc  $ASFLAGS $LIBINC -c -o "$OBJDIR/$OBJNAME" "$f"
+  		OTHER_OBJS="$OTHER_OBJS $OBJNAME"
+  		;;
+    esac
+  fi
+done
+
+
+
 PDE_BASE=`basename $PDE_FILE .pde`
 avr-gcc $PDEFLAGS $LIBINC -c -o $OBJDIR/$PDE_BASE.obj $PDE_FILE
-avr-gcc $LDFLAGS -o $OBJDIR/$PDE_BASE.elf $OBJDIR/$PDE_BASE.obj $LIB_OBJS $CORE_OBJS
+avr-gcc $LDFLAGS -o $OBJDIR/$PDE_BASE.elf $OBJDIR/$PDE_BASE.obj $OTHER_OBJS $LIB_OBJS $CORE_OBJS
 
 
 #
