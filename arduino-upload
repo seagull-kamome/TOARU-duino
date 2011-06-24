@@ -13,7 +13,7 @@ OBJDIR=
 OUTPUTDIR=
 
 usage () {
-		echo "Usage: $CMDNAME [-n] [-p port] [-b board] [-c dir] pde-file" 1>&2
+		echo "Usage: $CMDNAME [-n] [-p port] [-b board] [-c dir] [-o dir] [-O dir] pde-file" 1>&2
 		echo "" 1>&2
 		echo "-n		: Don't upload." 1>&2
 		echo "-p port		: Use port to upload." 1>&2
@@ -46,7 +46,7 @@ if [ "x$PDE_FILE" = "x" ]; then
 fi
 
 if [ "x$OBJDIR" = "x" ]; then
-	OBJDIR=$PDE_FILE.build-tmp
+	OBJDIR=$PDE_FILE.$ARDUINO_BOARD.build-tmp
 fi
 if [ "x$OUTPUTDIR" = "x" ]; then
 	OUTPUTDIR=$OBJDIR
@@ -125,7 +125,9 @@ done
 PDE_DIR=`dirname $PDE_FILE`
 OTHER_OBJS=
 for f in `ls -1 $PDE_DIR`; do
-  OBJNAME=`echo $f|sed -e "s!$PDE_DIR!!" -e "s!\.cpp!.o!" -e "s!\.c!.o!" -e "s!\.S!.o!"`
+  OBJNAME=`echo $f|sed -e "s!\.cpp!.o!" -e "s!\.c!.o!" -e "s!\.S!.o!"`
+  mkdir -p $OBJDIR/$PDE_DIR
+
   if [ "$f" -nt "$OBJDIR/$OBJNAME" -o ! -e "$OBJDIR/$OBJNAME" ]; then
     case `echo $f | sed -e 's!.*\.\(cpp\|c\|S\)$!\1!'` in
     "cpp")
@@ -148,7 +150,7 @@ done
 
 
 
-PDE_BASE=`basename $PDE_FILE .pde`
+PDE_BASE=`echo $PDE_FILE | sed -e 's!\.pde$!!'`
 avr-gcc $PDEFLAGS $LIBINC -c -o $OBJDIR/$PDE_BASE.obj $PDE_FILE
 avr-gcc $LDFLAGS -o $OBJDIR/$PDE_BASE.elf $OBJDIR/$PDE_BASE.obj $OTHER_OBJS $LIB_OBJS $CORE_OBJS
 
@@ -157,7 +159,7 @@ avr-gcc $LDFLAGS -o $OBJDIR/$PDE_BASE.elf $OBJDIR/$PDE_BASE.obj $OTHER_OBJS $LIB
 # 
 #
 avr-objcopy -O ihex -R .eeprom $OBJDIR/$PDE_BASE.elf $OUTPUTDIR/$PDE_BASE.hex
-avr-objcopy -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 -O ihex $OBJDIR/$PDE_BASE.elf $OUTPUTDIR/$PDE_BASE.eep
+#avr-objcopy -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 -O ihex $OBJDIR/$PDE_BASE.elf $OUTPUTDIR/$PDE_BASE.eep
 
 
 if [ "x$DO_UPLOAD" = "xy" ]; then
