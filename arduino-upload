@@ -140,6 +140,8 @@ for f in `ls -1 $PDE_DIR`; do
     	avr-gcc  $ASFLAGS $LIBINC -c -o "$OBJDIR/$OBJNAME" "$f"
   		OTHER_OBJS="$OTHER_OBJS $OBJNAME"
   		;;
+  	"*")
+  		;;
     esac
   fi
 done
