@@ -1,0 +1,139 @@
+#!/bin/bash
+
+CMDNAME=`basename $0`
+
+ARDUINO_DIR=/home/seagull/Projects/Arduino/TOARU-duino
+USR_LIB_DIR=$HOME/Arduino/libraries
+
+DO_UPLOAD=y
+PORT=/dev/ttyUSB0
+ARDUINO_BOARD=pro-20mhz-p
+
+OBJDIR=
+OUTPUTDIR=
+
+usage () {
+		echo "Usage: $CMDNAME [-n] [-p port] [-b board] [-c dir] pde-file" 1>&2
+		echo "" 1>&2
+		echo "-n		: Don't upload." 1>&2
+		echo "-p port		: Use port to upload." 1>&2
+		echo "-b board	: Specify Arduino board type." 1>&2
+		echo "-c dir		: Specify Arduino installed directory." 1>&2
+		echo "-o dir		: Specify object dir." 1>&2
+		echo "-O dir		: Specify output dir." 1>&2
+		exit 1
+}
+
+while getopts nhP:b:c:o:O: OPT
+do
+	case $OPT in
+	"n") DO_UPLOAD=n;;
+	"P") ARDUINO_PORT="$OPTARG";;
+	"b") ARDUINO_BOARD="$OPTARG";;
+	"c") ARDUINO_DIR="$OPTARG";;
+	"o") OBJDIR="$OPTARG";;
+	"O") OUTPUTDIR="$OPTARG";;
+	"h") usage;;
+	*) usage;;
+	esac
+done
+shift `expr $OPTIND - 1`
+PDE_FILE=$1
+
+if [ "x$PDE_FILE" = "x" ]; then
+	echo "No .pde file specified." 1>&2
+	exit 1
+fi
+
+if [ "x$OBJDIR" = "x" ]; then
+	OBJDIR=$PDE_FILE.build-tmp
+fi
+if [ "x$OUTPUTDIR" = "x" ]; then
+	OUTPUTDIR=$OBJDIR
+fi
+
+
+
+
+case $ARDUINO_BOARD in
+	pro-20mhz-p)
+		F_CPU=20000000
+		MCU=atmega168p
+		BAUD=115200
+		;;
+	pro-20mhz)
+		F_CPU=20000000
+		MCU=atmega168
+		BAUD=115200
+		;;
+	*)
+		echo "Unknwon board $ARDUINO_BOARD" 1>&2
+		exit 1
+		;;
+esac
+
+CFLAGS=-"mmcu=$MCU -DF_CPU=$F_CPU -std=gnu99 -I. -I$ARDUINO_DIR -I$ARDUINO_DIR/cores/arduino -g -O99 -Os -w -Wall -ffunction-sections -fdata-sections"
+CXXFLAGS="$CFLAGS -fno-exceptions"
+PDEFLAGS="$CXXFLAGS -xc++ -include cores/arduino/pde_main.inc"
+LDFLAGS="-mmcu=$MCU -lm -Wl,--gc-sections -Os"
+
+
+#
+# Build libraries
+#
+LIBS=HardwareSerial
+LIBS="$LIBS `cat $PDE_FILE|sed -e '/^#include\s*<\(.*\)\.h>/!d' -e '/^#include\s*<\(.*\)\.h>/s//\1 /'`"
+LIBINC=
+for l in $LIBS; do
+  LIBINC="$LIBINC -I$ARDUINO_DIR/libraries/$l"
+done
+
+LIB_SOURCES=
+for lib in $LIBS; do LIB_SOURCES="$LIB_SOURCES `ls -1 $ARDUINO_DIR/libraries/$lib/*.cpp|sed -e "s!$ARDUINO_DIR/!!"`"; done
+
+LIB_OBJS=
+for f in $LIB_SOURCES; do
+	OBJNAME=`echo $f|sed -e 's!\.cpp\$!.o!' -e 's!\.c\$!.o!' -e 's!\.S\$!.o!'`
+	LIB_OBJS="$LIB_OBJS $OBJDIR/$OBJNAME"
+	mkdir -p "$OBJDIR/`dirname $OBJNAME`"
+	if [ "$ARDUINO_DIR/$f" -nt "$OBJDIR/$OBJNAME" -o ! -e $OBJDIR/$OBJNAME ]; then
+		avr-gcc $CXXFLAGS $LIBINC -c -o "$OBJDIR/$OBJNAME" $ARDUINO_DIR/$f
+	fi
+done
+
+
+#
+# Build cores
+#
+CORE_OBJS=
+for f in $ARDUINO_DIR/cores/arduino/*.cpp; do
+  OBJNAME=`echo $f|sed -e "s!$ARDUINO_DIR!!" -e 's!\.cpp\$!.o!' -e 's!\.c\$!.o!' -e 's!\.S\$!.o!'`
+  CORE_OBJS="$CORE_OBJS $OBJDIR/$OBJNAME"
+  mkdir -p "$OBJDIR/`dirname $OBJNAME`"
+  if [ "$f" -nt "$OBJDIR/$OBJNAME" -o ! -e "$OBJDIR/$OBJNAME" ]; then
+  	avr-gcc  $CXXFLAGS $LIBINC -c -o "$OBJDIR/$OBJNAME" "$f"
+  fi
+done
+
+
+#
+# Build PDE
+#
+PDE_BASE=`basename $PDE_FILE .pde`
+avr-gcc $PDEFLAGS $LIBINC -c -o $OBJDIR/$PDE_BASE.obj $PDE_FILE
+avr-gcc $LDFLAGS -o $OBJDIR/$PDE_BASE.elf $OBJDIR/$PDE_BASE.obj $LIB_OBJS $CORE_OBJS
+
+
+#
+# 
+#
+avr-objcopy -O ihex -R .eeprom $OBJDIR/$PDE_BASE.elf $OUTPUTDIR/$PDE_BASE.hex
+avr-objcopy -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 -O ihex $OBJDIR/$PDE_BASE.elf $OUTPUTDIR/$PDE_BASE.eep
+
+
+if [ "x$DO_UPLOAD" = "xy" ]; then
+  avrdude -q -V -p $MCU -P $PORT -b $BAUD -c arduino \
+  	-U flash:w:$OUTPUTDIR/$PDE_BASE.hex:i \
+  	-U eeprom:w:$OUTPUTDIR/$PDE_BASE.eep:i
+fi
+
