@@ -24,6 +24,7 @@
 
 enum { INTERNAL = 3, DEFAULT = 1, EXTERNAL = 0 };
  
+static inline void analogReference(uint8_t mode) __attribute__ ((always_inline));
 static inline void analogReference(uint8_t mode)
 {
  	ADMUX = ADMUX & ~(0x03 << REFS0) | (mode & 0x03) << REFS0;
@@ -46,7 +47,8 @@ uint16_t analogRead(uint8_t pin);
 void analogWrite(uint8_t pin, int val);
 
 
-static __inline__ void analogWrite_const(uint8_t pin, uint8_t val) 
+static void analogWrite_const(uint8_t pin, uint8_t val) __attribute__ ((always_inline));
+static inline void analogWrite_const(uint8_t pin, uint8_t val) 
 {
 	pinMode_const(pin, OUTPUT);
 	if (val == 0)

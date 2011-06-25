@@ -81,23 +81,23 @@ public:
 	}
 
 
-	void __inline__ clear()
+	void inline clear()
 	{
 		::memset(&brightness_, 0, rows * cols);
 	}
 
-	void __inline__ setBrightness(uint8_t row, uint8_t col, uint8_t brightness)
+	void inline setBrightness(uint8_t row, uint8_t col, uint8_t brightness)
 	{
 		brightness_[col][row] = brightness;
 	}
 
-	void __inline__ getBrightness(uint8_t row, uint8_t col)
+	void inline getBrightness(uint8_t row, uint8_t col)
 	{
 		return brightness_[col][row];
 	}
 
 protected:
-	static void __inline__ updateRow(uint8_t row, uint8_t val)
+	static void inline updateRow(uint8_t row, uint8_t val)
 	{
 		uint8_t const duty = (rowpol == LOW)? val : (255 - val);
 
@@ -114,7 +114,7 @@ protected:
 		}
 	}
 
-	static void __inline__ updateCol(uint8_t col, uint8_t val)
+	static void inline updateCol(uint8_t col, uint8_t val)
 	{
 		switch (col)
 		{
