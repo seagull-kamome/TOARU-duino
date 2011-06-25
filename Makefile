@@ -31,7 +31,8 @@ SOURCES =  \
 	libraries/LiquidCrystal/examples/Scroll.pde \
 	libraries/LiquidCrystal/examples/SerialDisplay.pde \
 	libraries/LiquidCrystal/examples/setCursor.pde \
-	libraries/LiquidCrystal/examples/TextDirection.pde
+	libraries/LiquidCrystal/examples/TextDirection.pde \
+	libraries/PWMMatrix/examples/fade.pde
 
 all:
 	for f in $(filter %.pde,$(SOURCES)); do \

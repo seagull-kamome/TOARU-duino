@@ -36,69 +36,72 @@
   	}
   	
  */
-#include <cores/Arduino/WProgram.h>
+#include <WProgram.h>
+#include <string.h>
 
-template <int cols, int colpol, int rows, int rowpol, int pin0=-1, int pin2=-1, int pin3=-1, int pin4=-1, int pin5=01, int pin6=-1, int pin7=-1>
+template <int cols, int colpol, int rows, int rowpol, int pin0=-1, int pin1=-1, int pin2=-1, int pin3=-1, int pin4=-1, int pin5=01, int pin6=-1, int pin7=-1>
 class PWMMatrix
 {
-private:
+public:
 	PWMMatrix() {}
 
-public:
 	enum { COLS = cols, ROWS = rows, NUM_PINS = cols + rows };
 
-	static void __inline__ begin()
+	void __inline__ begin()
 	{
-		current_row_ = rows - 1;
+		current_col_ = cols - 1;
 		off();
 	}
 
-	static void update()
+	void update()
 	{
-		updateRow(current_row_++, rowpol);
+		updateCol(current_col_, colpol);
 
-		for (uint8_t c = 0; c < cols; c++)
-			updateCol(c, brightness[current_row_][c]);
-		updateRow(current_row_, !rowpol);
+		current_col_ = (current_col_ + 1) % cols;
+
+		for (uint8_t r = 0; r < rows; r++)
+			updateRow(r, brightness_[current_col_][r]);
+
+		updateCol(current_col_, colpol? LOW:HIGH);
 	}
 
-	static void off()
+	void off()
 	{
-		if (NUM_PINS > 0) pinMode(pin0, OUTPUT);
-		if (NUM_PINS > 1) pinMode(pin1, OUTPUT);
-		if (NUM_PINS > 2) pinMode(pin2, OUTPUT);
-		if (NUM_PINS > 3) pinMode(pin3, OUTPUT);
-		if (NUM_PINS > 4) pinMode(pin4, OUTPUT);
-		if (NUM_PINS > 5) pinMode(pin5, OUTPUT);
-		if (NUM_PINS > 6) pinMode(pin6, OUTPUT);
-		if (NUM_PINS > 7) pinMode(pin7, OUTPUT);
+		if (pin0 >= 0) pinMode(pin0, OUTPUT);
+		if (pin1 >= 0) pinMode(pin1, OUTPUT);
+		if (pin2 >= 0) pinMode(pin2, OUTPUT);
+		if (pin3 >= 0) pinMode(pin3, OUTPUT);
+		if (pin4 >= 0) pinMode(pin4, OUTPUT);
+		if (pin5 >= 0) pinMode(pin5, OUTPUT);
+		if (pin6 >= 0) pinMode(pin6, OUTPUT);
+		if (pin7 >= 0) pinMode(pin7, OUTPUT);
 		
 		for (uint8_t r = 0; r < rows; r++) updateRow(r, rowpol);
-		for (uint8_t c = 0; c < cols; c++) updateCol(c, 0);
+		for (uint8_t c = 0; c < cols; c++) updateCol(c, colpol);
 	}
 
 
-	static void __inline__ clear()
+	void __inline__ clear()
 	{
-		::memset(&brightness, rows * cols);
+		::memset(&brightness_, 0, rows * cols);
 	}
 
-	static void __inline__ setBrightness(uint8_t row, uint_t col, uint8_t brightness)
+	void __inline__ setBrightness(uint8_t row, uint8_t col, uint8_t brightness)
 	{
-		brightness_[row][col] = brightness;
+		brightness_[col][row] = brightness;
 	}
 
-	static void __inline__ getBrightness(uint8_t row, uint8_t col)
+	void __inline__ getBrightness(uint8_t row, uint8_t col)
 	{
-		return brightness_[row][col];
+		return brightness_[col][row];
 	}
 
 protected:
-	static void __inline__ updateCol(uint8_t col, uint8_t val)
+	static void __inline__ updateRow(uint8_t row, uint8_t val)
 	{
-		uint8_t const duty = (colpol == LOW)? val : (255 - val);
+		uint8_t const duty = (rowpol == LOW)? val : (255 - val);
 
-		switch (col)
+		switch (row + cols)
 		{
 		case 0: if (pin0 >= 0) analogWrite(pin0, duty); break;
 		case 1: if (pin1 >= 0) analogWrite(pin1, duty); break;
@@ -111,9 +114,9 @@ protected:
 		}
 	}
 
-	static void __inline__ updateRow(uint8_t row, uint8_t val)
+	static void __inline__ updateCol(uint8_t col, uint8_t val)
 	{
-		switch (cols + row)
+		switch (col)
 		{
 		case 0: if (pin0 >= 0) digitalWrite(pin0, val); break;
 		case 1: if (pin1 >= 0) digitalWrite(pin1, val); break;
@@ -128,6 +131,6 @@ protected:
 
 
 protected:
-	static uint8_t current_row_;
-	static uint8_t brightness_[rows][cols];
+	uint8_t current_col_;
+	uint8_t brightness_[cols][rows];
 };

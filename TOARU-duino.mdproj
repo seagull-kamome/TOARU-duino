@@ -9,10 +9,9 @@
     <ProjectGuid>{488878BB-6DD4-4E36-980B-E3DA0E7A272E}</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Default|AnyCPU' ">
-    <OutputPath>.\</OutputPath>
+    <OutputPath>.</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="pdelibs.sed" />
     <None Include="arduino-upload" />
     <None Include="arduino-config.h" />
     <None Include="README" />
@@ -114,5 +113,6 @@
     <Compile Include="libraries\LiquidCrystal\examples\Cursor.pde" />
     <Compile Include="libraries\LiquidCrystal\examples\Blink.pde" />
     <Compile Include="libraries\LiquidCrystal\examples\Autoscroll.pde" />
+    <Compile Include="libraries\PWMMatrix\examples\fade.pde" />
   </ItemGroup>
 </Project>

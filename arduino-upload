@@ -16,7 +16,7 @@ usage () {
 		echo "Usage: $CMDNAME [-n] [-p port] [-b board] [-c dir] [-o dir] [-O dir] pde-file" 1>&2
 		echo "" 1>&2
 		echo "-n		: Don't upload." 1>&2
-		echo "-p port		: Use port to upload." 1>&2
+		echo "-P port		: Use port to upload." 1>&2
 		echo "-b board	: Specify Arduino board type." 1>&2
 		echo "-c dir		: Specify Arduino installed directory." 1>&2
 		echo "-o dir		: Specify object dir." 1>&2
@@ -28,7 +28,7 @@ while getopts nhP:b:c:o:O: OPT
 do
 	case $OPT in
 	"n") DO_UPLOAD=n;;
-	"P") ARDUINO_PORT="$OPTARG";;
+	"P") PORT="$OPTARG";;
 	"b") ARDUINO_BOARD="$OPTARG";;
 	"c") ARDUINO_DIR="$OPTARG";;
 	"o") OBJDIR="$OPTARG";;
@@ -86,20 +86,19 @@ LDFLAGS="-mmcu=$MCU -lm -Wl,--gc-sections -Os"
 LIBS=HardwareSerial
 LIBS="$LIBS `cat $PDE_FILE|sed -e '/^#include\s*<\(.*\)\.h>/!d' -e '/^#include\s*<\(.*\)\.h>/s//\1 /'`"
 LIBINC=
-for l in $LIBS; do
-  LIBINC="$LIBINC -I$ARDUINO_DIR/libraries/$l"
-done
-
 LIB_SOURCES=
-for lib in $LIBS; do LIB_SOURCES="$LIB_SOURCES `ls -1 $ARDUINO_DIR/libraries/$lib/*.cpp|sed -e "s!$ARDUINO_DIR/!!"`"; done
+for lib in $LIBS; do
+	LIBINC="$LIBINC -I$ARDUINO_DIR/libraries/$lib"
+	LIB_SOURCES="$LIB_SOURCES `ls -1 $ARDUINO_DIR/libraries/$lib/|sed -e '/.*\.cpp/!d' -e "s|^\\(.*\\)\\$|$lib/\\\\1|"`"
+done
 
 LIB_OBJS=
 for f in $LIB_SOURCES; do
-	OBJNAME=`echo $f|sed -e 's!\.cpp\$!.o!' -e 's!\.c\$!.o!' -e 's!\.S\$!.o!'`
+	OBJNAME=libraries/`echo $f|sed -e 's!\.cpp\$!.o!' -e 's!\.c\$!.o!' -e 's!\.S\$!.o!'`
 	LIB_OBJS="$LIB_OBJS $OBJDIR/$OBJNAME"
 	mkdir -p "$OBJDIR/`dirname $OBJNAME`"
-	if [ "$ARDUINO_DIR/$f" -nt "$OBJDIR/$OBJNAME" -o ! -e $OBJDIR/$OBJNAME ]; then
-		avr-gcc $CXXFLAGS $LIBINC -c -o "$OBJDIR/$OBJNAME" $ARDUINO_DIR/$f
+	if [ "$ARDUINO_DIR/libraries/$f" -nt "$OBJDIR/$OBJNAME" -o ! -e $OBJDIR/$OBJNAME ]; then
+		avr-gcc $CXXFLAGS $LIBINC -c -o "$OBJDIR/$OBJNAME" $ARDUINO_DIR/libraries/$f
 	fi
 done
 
