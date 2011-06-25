@@ -98,6 +98,7 @@ for f in $LIB_SOURCES; do
 	LIB_OBJS="$LIB_OBJS $OBJDIR/$OBJNAME"
 	mkdir -p "$OBJDIR/`dirname $OBJNAME`"
 	if [ "$ARDUINO_DIR/libraries/$f" -nt "$OBJDIR/$OBJNAME" -o ! -e $OBJDIR/$OBJNAME ]; then
+		rm -f $OBJDIR/$OBJNAME
 		avr-gcc $CXXFLAGS $LIBINC -c -o "$OBJDIR/$OBJNAME" $ARDUINO_DIR/libraries/$f
 	fi
 done
@@ -112,6 +113,7 @@ for f in $ARDUINO_DIR/cores/arduino/*.cpp; do
   CORE_OBJS="$CORE_OBJS $OBJDIR/$OBJNAME"
   mkdir -p "$OBJDIR/`dirname $OBJNAME`"
   if [ "$f" -nt "$OBJDIR/$OBJNAME" -o ! -e "$OBJDIR/$OBJNAME" ]; then
+  	rm -f $OBJDIR/$OBJNAME
   	avr-gcc  $CXXFLAGS $LIBINC -c -o "$OBJDIR/$OBJNAME" "$f"
   fi
 done
@@ -122,24 +124,28 @@ done
 # Build PDE
 #
 PDE_DIR=`dirname $PDE_FILE`
+mkdir -p $OBJDIR/$PDE_DIR
+
 OTHER_OBJS=
 for f in `ls -1 $PDE_DIR`; do
-  OBJNAME=`echo $f|sed -e "s!\.cpp!.o!" -e "s!\.c!.o!" -e "s!\.S!.o!"`
-  mkdir -p $OBJDIR/$PDE_DIR
+  OBJNAME=$PDE_DIR/`echo $f|sed -e "s!\.cpp!.o!" -e "s!\.c!.o!" -e "s!\.S!.o!"`
 
   if [ "$f" -nt "$OBJDIR/$OBJNAME" -o ! -e "$OBJDIR/$OBJNAME" ]; then
     case `echo $f | sed -e 's!.*\.\(cpp\|c\|S\)$!\1!'` in
     "cpp")
+		rm $OBJDIR/$OBJNAME
     	avr-gcc  $CXXFLAGS $LIBINC -c -o "$OBJDIR/$OBJNAME" "$f"
-  		OTHER_OBJS="$OTHER_OBJS $OBJNAME"
+  		OTHER_OBJS="$OTHER_OBJS $OBJDIR/$OBJNAME"
   		;;
     "c")
+		rm $OBJDIR/$OBJNAME
     	avr-gcc  $CFLAGS $LIBINC -c -o "$OBJDIR/$OBJNAME" "$f"
-  		OTHER_OBJS="$OTHER_OBJS $OBJNAME"
+  		OTHER_OBJS="$OTHER_OBJS $OBJDIR/$OBJNAME"
   		;;
     "S")
+		rm $OBJDIR/$OBJNAME
     	avr-gcc  $ASFLAGS $LIBINC -c -o "$OBJDIR/$OBJNAME" "$f"
-  		OTHER_OBJS="$OTHER_OBJS $OBJNAME"
+  		OTHER_OBJS="$OTHER_OBJS $OBJDIR/$OBJNAME"
   		;;
   	"*")
   		;;
@@ -152,6 +158,10 @@ done
 PDE_BASE=`echo $PDE_FILE | sed -e 's!\.pde$!!'`
 avr-gcc $PDEFLAGS $LIBINC -c -o $OBJDIR/$PDE_BASE.obj $PDE_FILE
 avr-gcc $LDFLAGS -o $OBJDIR/$PDE_BASE.elf $OBJDIR/$PDE_BASE.obj $OTHER_OBJS $LIB_OBJS $CORE_OBJS
+if [ $? -ne 0 ]; then
+	echo "Failed to build $PDE_BASE." 1>&2
+	exit 1;
+fi
 
 
 #
