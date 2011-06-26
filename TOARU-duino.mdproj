@@ -63,6 +63,7 @@
     <None Include="cores\arduino\PinMapper.h" />
     <None Include="libraries\PWMMatrix\examples\heartbeat.pde" />
     <None Include="libraries\PWMMatrix\examples\counter.pde" />
+    <None Include="TODO.txt" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
