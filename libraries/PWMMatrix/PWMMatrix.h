@@ -15,122 +15,178 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA  
-  
-  
-  Usage:
-  	typedef PWMMatrix<cols, colpol, rows, rowpol, col_pins ..., row_pins ....> matrix;
-  		cols, rows  : rows and cols of matrix.
-  		colpol, rowpol : Polarity for idle.
-  	
-  	void setup()
-  	{
-  		matrix::begin();
-  	}
-  	
-  	void loop()
-  	{
-  		matrix::setBrightness(row, col, brightness);
-  		
-  		matrix::update();
-  		delay(100);
-  	}
-  	
  */
-#include <WProgram.h>
-#include <string.h>
+#if !defined(PWMMatrix_H)
+#  define PWMMatrix_H
 
-template <int cols, int colpol, int rows, int rowpol, int pin0=-1, int pin1=-1, int pin2=-1, int pin3=-1, int pin4=-1, int pin5=01, int pin6=-1, int pin7=-1>
-class PWMMatrix
+#  include <WProgram.h>
+#  include <PinMapper.h>
+#  include <string.h>
+#  include <avr/pgmspace.h>
+
+namespace PWMMatrix_impl
+{
+	/*
+	 PWMMatrixの内部バッファの型と、その操作を定義する基底テンプレートクラスを定義します。
+	*/
+	template <uint8_t rows, uint8_t cols, bool analog> class PWMMatrixBuffer;
+	
+	/* 各点が0〜255の輝度を持つアナログのバッファ */
+	template <uint8_t rows, uint8_t cols> class PWMMatrixBuffer<rows, cols, true>
+	{
+	private:
+		uint8_t brightness_[rows][cols];
+	public:
+		void inline clear()
+		{
+			::memset(brightness_, 0, sizeof(brightness_));
+		}
+	
+		void inline setBrightness(uint8_t const row, uint8_t const col, uint8_t const brightness)
+		{
+			brightness_[rows][cols] = brightness;
+		}
+		
+		uint8_t inline getBrightness(uint8_t const row, uint8_t const col)
+		{
+			return brightness_[row][col];
+		}
+	};
+
+
+	PROGMEM prog_char hexdigits[] __attribute__ ((weak)) = {
+	        0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f, 
+	        0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71 };
+
+
+	/* 各点が HIGH/LOW の2値しか持たないデジタルのバッファ */
+	template <uint8_t rows> class PWMMatrixBuffer_byte
+	{
+	private:
+		uint8_t brightness_[rows];		// デジタルの場合、行数は最大8
+	public:
+		void inline clear()
+		{
+			::memset(brightness_, 0, sizeof(brightness_));
+		}
+	
+		void inline setBrightness(uint8_t const row, uint8_t const col, uint8_t const brightness)
+		{
+			if (brightness > 127)
+				brightness_[row] |= 1 << col;
+			else
+				brightness_[row] &= ~(1 << col);
+		}
+	
+		uint8_t inline getBrightness(uint8_t const row, uint8_t const col)
+		{
+			return (brightness_[row] & (1 << col))? HIGH : LOW;
+		}
+		
+		void inline write(uint8_t const row, uint8_t const value)
+		{
+			brightness_[row] = value;
+		}
+		
+		void inline write(uint8_t const row, uint8_t const values[], uint8_t len)
+		{
+			if (len > rows - row) len = rows - row;
+			::memcpy(brightness_ + row, values, len);
+		}
+
+		void inline write_P(uint8_t const row, uint8_t PROGMEM const* values, uint8_t len)
+		{
+			if (len > rows - row) len = rows - row;
+			::memcpy_P(brightness_ + row, values, len);
+		}
+		
+		void inline writeHexDigit(uint8_t row, uint8_t digit)
+		{
+			brightness_[row] = pgm_read_byte(&hexdigits[digit & 0x0f]);
+		}
+	};
+
+	template <uint8_t rows, uint8_t cols>
+	class PWMMatrixBuffer<rows, cols, false> : public PWMMatrixBuffer_byte<rows> {};
+}
+
+
+template <bool analog, uint8_t cols, uint8_t colpol, uint8_t rows, uint8_t rowpol, typename PinMapper_t>
+class PWMMatrix : public PWMMatrix_impl::PWMMatrixBuffer<rows, cols, analog>
 {
 public:
+	typedef PWMMatrix_impl::PWMMatrixBuffer<rows, cols, analog> super_t;
+
 	PWMMatrix() {}
 
-	enum { COLS = cols, ROWS = rows, NUM_PINS = cols + rows };
+	enum { COLS = cols, ROWS = rows, NUM_PINS = cols + rows, UPDATE_CYCLE = 2 };
 
 	void __inline__ begin()
 	{
-		current_col_ = cols - 1;
+		current_row_ = 255;
+		pinmapper_.pinModeAll(OUTPUT);
 		off();
 	}
 
+
 	void update()
 	{
-		updateCol(current_col_, colpol);
+		unsigned long t0 = millis();
+		if (current_row_ == 255 || t0 > next_update_time_) {
+			updateRow(current_row_, rowpol);
 
-		current_col_ = (current_col_ + 1) % cols;
-
-		for (uint8_t r = 0; r < rows; r++)
-			updateRow(r, brightness_[current_col_][r]);
-
-		updateCol(current_col_, colpol? LOW:HIGH);
+			current_row_ = (current_row_ + 1) % rows;
+	
+			for (uint8_t c = 0; c < cols; c++)
+				updateCol(c, super_t::getBrightness(current_row_, c));
+	
+			updateRow(current_row_, rowpol? LOW:HIGH);
+			
+			next_update_time_ = t0 + UPDATE_CYCLE;
+		}
 	}
 
+
+	void updateWithDelay(unsigned long ms)
+	{
+		unsigned long t0 = millis();
+		do {
+			update();
+		} while (current_row_ != rows -1 || (millis() - t0) < ms);
+	}
+
+	/** すべてのピンをアイドル状態にします */
 	void off()
 	{
-		if (pin0 >= 0) pinMode(pin0, OUTPUT);
-		if (pin1 >= 0) pinMode(pin1, OUTPUT);
-		if (pin2 >= 0) pinMode(pin2, OUTPUT);
-		if (pin3 >= 0) pinMode(pin3, OUTPUT);
-		if (pin4 >= 0) pinMode(pin4, OUTPUT);
-		if (pin5 >= 0) pinMode(pin5, OUTPUT);
-		if (pin6 >= 0) pinMode(pin6, OUTPUT);
-		if (pin7 >= 0) pinMode(pin7, OUTPUT);
-		
 		for (uint8_t r = 0; r < rows; r++) updateRow(r, rowpol);
 		for (uint8_t c = 0; c < cols; c++) updateCol(c, colpol);
 	}
 
 
-	void inline clear()
+public:
+	void inline updateCol(uint8_t col, uint8_t val)
 	{
-		::memset(&brightness_, 0, rows * cols);
+		if (analog)
+			pinmapper_.analogWrite(col, (colpol == LOW)? val : (255 - val));
+		else if (colpol == LOW)
+			pinmapper_.digitalWrite(col, val);
+		else
+			pinmapper_.digitalWrite(col, val?LOW:HIGH);
 	}
 
-	void inline setBrightness(uint8_t row, uint8_t col, uint8_t brightness)
+	void inline updateRow(uint8_t row, uint8_t val)
 	{
-		brightness_[col][row] = brightness;
-	}
-
-	void inline getBrightness(uint8_t row, uint8_t col)
-	{
-		return brightness_[col][row];
-	}
-
-protected:
-	static void inline updateRow(uint8_t row, uint8_t val)
-	{
-		uint8_t const duty = (rowpol == LOW)? val : (255 - val);
-
-		switch (row + cols)
-		{
-		case 0: if (pin0 >= 0) analogWrite(pin0, duty); break;
-		case 1: if (pin1 >= 0) analogWrite(pin1, duty); break;
-		case 2: if (pin2 >= 0) analogWrite(pin2, duty); break;
-		case 3: if (pin3 >= 0) analogWrite(pin3, duty); break;
-		case 4: if (pin4 >= 0) analogWrite(pin4, duty); break;
-		case 5: if (pin5 >= 0) analogWrite(pin5, duty); break;
-		case 6: if (pin6 >= 0) analogWrite(pin6, duty); break;
-		case 7: if (pin7 >= 0) analogWrite(pin7, duty); break;
-		}
-	}
-
-	static void inline updateCol(uint8_t col, uint8_t val)
-	{
-		switch (col)
-		{
-		case 0: if (pin0 >= 0) digitalWrite(pin0, val); break;
-		case 1: if (pin1 >= 0) digitalWrite(pin1, val); break;
-		case 2: if (pin2 >= 0) digitalWrite(pin2, val); break;
-		case 3: if (pin3 >= 0) digitalWrite(pin3, val); break;
-		case 4: if (pin4 >= 0) digitalWrite(pin4, val); break;
-		case 5: if (pin5 >= 0) digitalWrite(pin5, val); break;
-		case 6: if (pin6 >= 0) digitalWrite(pin6, val); break;
-		case 7: if (pin7 >= 0) digitalWrite(pin7, val); break;
-		}
+		if (rowpol == LOW)
+			pinmapper_.digitalWrite(row + cols, val);
+		else
+			pinmapper_.digitalWrite(row + cols, val?LOW:HIGH);
 	}
 
 
 protected:
-	uint8_t current_col_;
-	uint8_t brightness_[cols][rows];
+	PinMapper_t pinmapper_;
+	unsigned long next_update_time_;
+	uint8_t current_row_;
 };
+
+#endif
