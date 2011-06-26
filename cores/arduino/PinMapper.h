@@ -125,7 +125,7 @@ struct PinMapper
 #  undef f
 	}
 
-	void write(uint8_t const offs, uint8_t const len, uint8_t x)
+	void write(uint8_t const offs, uint8_t x, uint8_t const len)
 	{
 		for (int i = offs; i < len + offs; i++) {
 			digitalWrite(i, (x & 1));
@@ -133,7 +133,7 @@ struct PinMapper
 		}
 	}
 
-	void write(uint8_t const offs, uint8_t const len, uint16_t x)
+	void write(uint8_t const offs, uint16_t x, uint8_t const len)
 	{
 		for (int i = offs; i < len + offs; i++) {
 			digitalWrite(i, (x & 1));
@@ -141,7 +141,7 @@ struct PinMapper
 		}
 	}
 
-	void write(uint8_t const offs, uint8_t const len, uint32_t x)
+	void write(uint8_t const offs, uint32_t x, uint8_t const len)
 	{
 		for (int i = offs; i < len + offs; i++) {
 			digitalWrite(i, (x & 1));
