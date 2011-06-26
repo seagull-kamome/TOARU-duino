@@ -83,13 +83,17 @@ LDFLAGS="-mmcu=$MCU -lm -Wl,--gc-sections -Os"
 #
 # Build libraries
 #
+
+# ライブラリのディレクトリリストと、ソースリストを得る
 LIBS=HardwareSerial
 LIBS="$LIBS `cat $PDE_FILE|sed -e '/^#include\s*<\(.*\)\.h>/!d' -e '/^#include\s*<\(.*\)\.h>/s//\1 /'`"
 LIBINC=
 LIB_SOURCES=
 for lib in $LIBS; do
-	LIBINC="$LIBINC -I$ARDUINO_DIR/libraries/$lib"
-	LIB_SOURCES="$LIB_SOURCES `ls -1 $ARDUINO_DIR/libraries/$lib/|sed -e '/.*\.cpp/!d' -e "s|^\\(.*\\)\\$|$lib/\\\\1|"`"
+	if [ -d $ARDUINO_DIR/libraries/$lib ]; then		# includeしてるのがライブラリとは限らないのでチェック必要
+	  LIBINC="$LIBINC -I$ARDUINO_DIR/libraries/$lib"
+	  LIB_SOURCES="$LIB_SOURCES `ls -1 $ARDUINO_DIR/libraries/$lib/|sed -e '/.*\.cpp/!d' -e "s|^\\(.*\\)\\$|$lib/\\\\1|"`"
+	fi
 done
 
 LIB_OBJS=
@@ -156,8 +160,8 @@ done
 
 
 PDE_BASE=`echo $PDE_FILE | sed -e 's!\.pde$!!'`
-avr-gcc $PDEFLAGS $LIBINC -c -o $OBJDIR/$PDE_BASE.obj $PDE_FILE
-avr-gcc $LDFLAGS -o $OBJDIR/$PDE_BASE.elf $OBJDIR/$PDE_BASE.obj $OTHER_OBJS $LIB_OBJS $CORE_OBJS
+avr-gcc $PDEFLAGS $LIBINC -c -o $OBJDIR/$PDE_BASE.o $PDE_FILE
+avr-gcc $LDFLAGS -o $OBJDIR/$PDE_BASE.elf $OBJDIR/$PDE_BASE.o $OTHER_OBJS $LIB_OBJS $CORE_OBJS
 if [ $? -ne 0 ]; then
 	echo "Failed to build $PDE_BASE." 1>&2
 	exit 1;

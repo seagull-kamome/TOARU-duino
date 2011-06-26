@@ -63,6 +63,9 @@
     <None Include="libraries\DataLoggerShield\DataLogger.cpp" />
     <None Include="libraries\DataLoggerShield\examples\DataLoggerTest.pde" />
     <None Include="Makefile" />
+    <None Include="cores\arduino\PinMapper.h" />
+    <None Include="libraries\PWMMatrix\examples\heartbeat.pde" />
+    <None Include="libraries\PWMMatrix\examples\counter.pde" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

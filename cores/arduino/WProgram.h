@@ -123,6 +123,7 @@ typedef uint32_t dword;
 #  include <cores/arduino/binary.h>
 #  include <cores/arduino/digital.h>
 #  include <cores/arduino/analog.h>
+#  include <cores/arduino/PinMapper.h>
 #  include <arduino-config.h>
 
 #endif
