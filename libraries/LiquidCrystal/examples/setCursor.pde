@@ -38,26 +38,24 @@
 // include the library code:
 #include <LiquidCrystal.h>
 
-// these constants won't change.  But you can change the size of
-// your LCD using them:
-const int numRows = 2;
-const int numCols = 16;
-
 // initialize the library with the numbers of the interface pins
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+LiquidCrystal<16,2,LCD_5x8DOTS, 12, 10, 5, 4, 3, 2> lcd;
 
 void setup() {
-  // set up the LCD's number of columns and rows: 
-  lcd.begin(numCols,numRows);
+	analogWrite(6, 128);
+	analogWrite(11, 128);
+
+	// set up the LCD's number of columns and rows: 
+	lcd.begin();
 }
 
 void loop() {
   // loop from ASCII 'a' to ASCII 'z':
   for (int thisLetter = 'a'; thisLetter <= 'z'; thisLetter++) {
     // loop over the columns:
-    for (int thisCol = 0; thisCol < numRows; thisCol++) {
+    for (int thisCol = 0; thisCol < lcd.ROWS; thisCol++) {
       // loop over the rows:
-      for (int thisRow = 0; thisRow < numCols; thisRow++) {
+      for (int thisRow = 0; thisRow < lcd.COLS; thisRow++) {
         // set the cursor position:
         lcd.setCursor(thisRow,thisCol);
         // print the letter:

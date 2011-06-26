@@ -1,4 +1,4 @@
-  /*
+/*
   LiquidCrystal Library - TextDirection
  
  Demonstrates the use a 16x2 LCD display.  The LiquidCrystal
@@ -40,13 +40,15 @@
 #include <LiquidCrystal.h>
 
 // initialize the library with the numbers of the interface pins
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+LiquidCrystal<16,2,LCD_5x8DOTS, 12, 10, 5, 4, 3, 2> lcd;
 
 int thisChar = 'a';
 
 void setup() {
+	analogWrite(6, 128);
+	analogWrite(11, 128);
   // set up the LCD's number of columns and rows: 
-  lcd.begin(16, 2);
+  lcd.begin();
   // turn on the cursor:
   lcd.cursor();
   Serial.begin(9600);
@@ -77,11 +79,3 @@ void loop() {
   // increment the letter:
   thisChar++;
 }
-
-
-
-
-
-
-
-

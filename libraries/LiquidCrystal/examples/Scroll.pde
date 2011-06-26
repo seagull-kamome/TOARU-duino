@@ -40,25 +40,27 @@
 #include <LiquidCrystal.h>
 
 // initialize the library with the numbers of the interface pins
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+LiquidCrystal<16,2,LCD_5x8DOTS, 12, 10, 5, 4, 3, 2> lcd;
 
 void setup() {
-  // set up the LCD's number of columns and rows: 
-  lcd.begin(16, 2);
-  // Print a message to the LCD.
-  lcd.print("hello, world!");
-  delay(1000);
+	analogWrite(6, 128);
+	analogWrite(11, 128);
+	// set up the LCD's number of columns and rows: 
+	lcd.begin();
+	// Print a message to the LCD.
+	lcd.print("hello, world!");
+	delay(1000);
 }
 
 void loop() {
-  // scroll 13 positions (string length) to the left 
-  // to move it offscreen left:
-  for (int positionCounter = 0; positionCounter < 13; positionCounter++) {
-    // scroll one position left:
-    lcd.scrollDisplayLeft(); 
-    // wait a bit:
-    delay(150);
-  }
+	// scroll 13 positions (string length) to the left 
+	// to move it offscreen left:
+	for (int positionCounter = 0; positionCounter < 13; positionCounter++) {
+		// scroll one position left:
+		lcd.scrollDisplayLeft(); 
+		// wait a bit:
+		delay(150);
+	}
 
   // scroll 29 positions (string length + display length) to the right
   // to move it offscreen right:
