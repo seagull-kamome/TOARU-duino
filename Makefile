@@ -14,12 +14,6 @@ SOURCES =  \
 	examples/3.Analog/Calibration.pde \
 	examples/3.Analog/Fading.pde \
 	examples/3.Analog/Smoothing.pde \
-	libraries/Dots/examples/flip_animation.pde \
-	libraries/Dots/examples/heartbeat.pde \
-	libraries/Dots/examples/hello_matrix.pde \
-	libraries/Dots/examples/inverder.pde \
-	libraries/Dots/examples/scroll_animation.pde \
-	libraries/Dots/examples/wave_animation.pde \
 	libraries/EEPROM/examples/eeprom_clear.pde \
 	libraries/EEPROM/examples/eeprom_read.pde \
 	libraries/EEPROM/examples/eeprom_write.pde \

@@ -48,9 +48,6 @@
     <None Include="libraries\EEPROM\keywords.txt" />
     <None Include="libraries\EEPROM\EEPROM.h" />
     <None Include="libraries\EEPROM\EEPROM.cpp" />
-    <None Include="libraries\Dots\keywords.txt" />
-    <None Include="libraries\Dots\Dots.h" />
-    <None Include="libraries\Dots\Dots.cpp" />
     <None Include="libraries\DataLoggerShield\pff.h" />
     <None Include="libraries\DataLoggerShield\pff.cpp" />
     <None Include="libraries\DataLoggerShield\mmc.cpp" />
@@ -101,12 +98,6 @@
     <Compile Include="libraries\EEPROM\examples\eeprom_write.pde" />
     <Compile Include="libraries\EEPROM\examples\eeprom_read.pde" />
     <Compile Include="libraries\EEPROM\examples\eeprom_clear.pde" />
-    <Compile Include="libraries\Dots\examples\wave_animation.pde" />
-    <Compile Include="libraries\Dots\examples\scroll_animation.pde" />
-    <Compile Include="libraries\Dots\examples\inverder.pde" />
-    <Compile Include="libraries\Dots\examples\hello_matrix.pde" />
-    <Compile Include="libraries\Dots\examples\heartbeat.pde" />
-    <Compile Include="libraries\Dots\examples\flip_animation.pde" />
     <Compile Include="libraries\LiquidCrystal\examples\setCursor.pde" />
     <Compile Include="libraries\LiquidCrystal\examples\TextDirection.pde" />
     <Compile Include="libraries\LiquidCrystal\examples\SerialDisplay.pde" />
