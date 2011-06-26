@@ -44,7 +44,6 @@ static inline void analogWaitForConversion() { while (ADCSRA & (1 << ADSC)); }
 static inline uint16_t analogResult() { uint8_t low = ADCL; return (ADCH << 8) | low; }
 
 uint16_t analogRead(uint8_t pin);
-void analogWrite(uint8_t pin, int val);
 
 
 static void analogWrite_const(uint8_t pin, uint8_t val) __attribute__ ((always_inline));
@@ -94,13 +93,12 @@ static inline void analogWrite_const(uint8_t pin, uint8_t val)
 }
 
 void analogWrite_noconst(uint8_t pin, uint8_t val);
-
-#  define analogWrite(x, y)				\
-	do {								\
-		if (__builtin_constant_p(x))	\
-			analogWrite_const(x,y);		\
-		else							\
-			analogWrite_noconst(x,y);	\
-	} while (0)
-
+inline void analogWrite(uint8_t pin, int val) __attribute__ ((always_inline));
+inline void analogWrite(uint8_t pin, int val)
+{
+	if (__builtin_constant_p(pin))
+		analogWrite_const(pin, val);
+	else
+		analogWrite_noconst(pin, val);
+}
 #endif

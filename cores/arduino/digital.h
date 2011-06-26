@@ -23,7 +23,7 @@
 #  include <stdint.h>
 
 enum { INPUT = 0, OUTPUT = 1,
-		HIGH = 1, LOW = 0 };
+		HIGH = 255, LOW = 0 };
 
 struct High { enum { value = HIGH, inverse = LOW }; };
 struct Low { enum { value = LOW, inverse = HIGH }; };
@@ -36,29 +36,29 @@ struct Output { enum { value = 1, inverse = 0 }; };
 #  define pinno2bit(x)			((x) < 8 ? (x) : (x) < 14 ? (x) - 8 : (x) - 14)
 
 
-#  define pinMode_const(pin, mode)	do {						\
-		switch (mode)											\
-		{														\
-		case OUTPUT:											\
-			pinno2ddrreg(pin) |= 1 << pinno2bit(pin);			\
-			break;												\
-		case INPUT:												\
-			pinno2ddrreg(pin) &= ~(1 << pinno2bit(pin));		\
-			break;												\
-		}														\
-	} while (0)
 
-
+inline void pinMode_const(uint8_t pin, uint8_t mode) __attribute__ ((always_inline));
+inline void pinMode_const(uint8_t pin, uint8_t mode)
+{
+	switch (mode)
+	{
+	case OUTPUT:
+		pinno2ddrreg(pin) |= 1 << pinno2bit(pin);
+		break;
+	case INPUT:
+		pinno2ddrreg(pin) &= ~(1 << pinno2bit(pin));
+		break;
+	}
+}
 void pinMode_noconst(uint8_t pin, uint8_t mode);
-
-#   define pinMode(pin, mode)										\
-	do {															\
-		if (__builtin_constant_p(pin))								\
-			pinMode_const(pin, mode);								\
-		else														\
-			pinMode_noconst(pin, mode);								\
-	 } while (0)
-
+inline void pinMode(uint8_t pin, uint8_t mode) __attribute__ ((always_inline));
+inline void pinMode(uint8_t pin, uint8_t mode)
+{
+	if (__builtin_constant_p(pin))
+		pinMode_const(pin, mode);
+	else
+		pinMode_noconst(pin, mode);
+}
 
 #  define turnOffPWM_const(pin) do {								\
 		switch (pin)												\
@@ -88,29 +88,38 @@ void pinMode_noconst(uint8_t pin, uint8_t mode);
 
 void turnOffPWM_noconst(uint8_t pin);
 
-#  define digitalWrite_const(pin, val)	do { 				\
-	turnOffPWM_const(pin);									\
-	if (val)												\
-		pinno2portreg(pin) |= 1 << pinno2bit(pin);			\
-	else													\
-		pinno2portreg(pin) &= ~(1 << pinno2bit(pin));		\
-	} while (0)
+
+inline void digitalWrite_const(int pin, int val) __attribute__ ((always_inline));
+inline void digitalWrite_const(int pin, int val)
+{
+	turnOffPWM_const(pin);
+	if (val)
+		pinno2portreg(pin) |= 1 << pinno2bit(pin);
+	else
+		pinno2portreg(pin) &= ~(1 << pinno2bit(pin));
+}
+
 
 void digitalWrite_noconst(uint8_t pin, uint8_t val);
 
-#   define digitalWrite(pin, val)									\
-	do {															\
-		if (__builtin_constant_p(pin)) digitalWrite_const(pin, val);	\
-		else digitalWrite_noconst(pin, val);						\
-	 } while (0)
+inline bool digitalWrite(int pin, int val) __attribute__ ((always_inline));
+inline bool digitalWrite(int pin, int val)
+{
+	if (__builtin_constant_p(pin)) digitalWrite_const(pin, val);
+	else digitalWrite_noconst(pin, val);
+}
 
-
-
-#  define digitalRead_const(pin) ((pinno2pinreg(pin) & (1 << pinno2bit(pin)))?HIGH:LOW)
 
 bool digitalRead_noconst(uint8_t pin);
+inline bool digitalRead(int pin) __attribute__ ((always_inline));
+inline bool digitalRead(int pin)
+{
+	if (__builtin_constant_p(pin))
+		return ((pinno2pinreg(pin) & (1 << pinno2bit(pin)))?HIGH:LOW);
+	else 
+		return digitalRead_noconst(pin);
+}
 
-#   define digitalRead(pin)	(__builtin_constant_p(pin)? digitalRead_const(pin) : digitalRead_noconst(pin))
 
 
 
