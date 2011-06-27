@@ -38,14 +38,14 @@ struct PinMapper
 #  undef f
 	};
 	
-	uint32_t inline pinmask() const
+	static uint32_t inline pinmask()
 	{
 #  define f(a,b)		| ((pin##a##b >= 0) ? 1 << (pin##a##b) : 0)
 		return 0 OP(f);
 #  undef f
 	};
 
-	void inline pinModeAll(int mode)
+	static inline void pinModeAll(int mode)
 	{
 		uint32_t msk = pinmask();
 
@@ -74,7 +74,7 @@ struct PinMapper
 		}
 	}
 
-	void inline pinMode(int x, int mode)
+	static void pinMode(int x, int mode)
 	{
 #  define f(a,b)		case ((a) * 10 + (b)):	if (pin##a##b >= 0) pinMode(pin##a##b, mode); break;
 		switch (x) { OP(f) }
@@ -82,7 +82,7 @@ struct PinMapper
 	}
 
 
-	void inline digitalWriteAll(int value)
+	static inline void digitalWriteAll(int value)
 	{
 		uint32_t msk = pinmask();
 
@@ -111,21 +111,21 @@ struct PinMapper
 		}
 	}
 
-	void digitalWrite(int const x, int const value)
+	static void digitalWrite(int const x, int const value)
 	{
 #  define f(a,b)		if ((a) * 10 + (b) == x && pin##a##b >= 0) digitalWrite_const(pin##a##b, value); else
 		OP(f) ;
 #  undef f
 	}
 	
-	bool digitalRead(int const x)
+	static bool digitalRead(int const x)
 	{
 #  define f(a,b)		case ((a) * 10 + (b)):	if (pin##a##b >= 0) return digitalRead(pin##a##b);
 		switch (x) { OP(f) }
 #  undef f
 	}
 
-	void write(uint8_t const offs, uint8_t x, uint8_t const len)
+	static void write(uint8_t const offs, uint8_t x, uint8_t const len)
 	{
 		for (int i = offs; i < len + offs; i++) {
 			digitalWrite(i, (x & 1));
@@ -133,7 +133,7 @@ struct PinMapper
 		}
 	}
 
-	void write(uint8_t const offs, uint16_t x, uint8_t const len)
+	static void write(uint8_t const offs, uint16_t x, uint8_t const len)
 	{
 		for (int i = offs; i < len + offs; i++) {
 			digitalWrite(i, (x & 1));
@@ -141,7 +141,7 @@ struct PinMapper
 		}
 	}
 
-	void write(uint8_t const offs, uint32_t x, uint8_t const len)
+	static void write(uint8_t const offs, uint32_t x, uint8_t const len)
 	{
 		for (int i = offs; i < len + offs; i++) {
 			digitalWrite(i, (x & 1));
@@ -149,14 +149,14 @@ struct PinMapper
 		}
 	}
 
-	void analogWrite(int pin, uint8_t value)
+	static void analogWrite(int pin, uint8_t value)
 	{
 #  define f(a, b)	case ((a) * 10 + b): if (pin##a##b >= 0) analogWrite(pin##a##b, value); break;
 		switch (pin) { OP(f) }
 #  undef f
 	}
 
-	uint16_t analogRead(int pin)
+	static uint16_t analogRead(int pin)
 	{
 #  define f(a, b)	case ((a) * 10 + b): return (pin##a##b >= 0)? analogRead(pin##a##b) : 0;
 		switch (pin) { OP(f) }
