@@ -38,7 +38,6 @@
     <None Include="libraries\SoftwareSerial\SoftwareSerial.h" />
     <None Include="libraries\SoftwareSerial\SoftwareSerial.cpp" />
     <None Include="libraries\SerialBus\SerialBus.h" />
-    <None Include="libraries\SerialBus\SerialBus.cpp" />
     <None Include="libraries\PWMMatrix\PWMMatrix.h" />
     <None Include="libraries\LiquidCrystal\keywords.txt" />
     <None Include="libraries\LiquidCrystal\LiquidCrystal.h" />
