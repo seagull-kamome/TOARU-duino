@@ -9,18 +9,21 @@
 /*-------------------------------------------------------------------------*/
 
 #include <avr/io.h>			/* Device include file */
-#include <util/delay.h>
-#include "DataLogger.h"
-#include "SerialBUS.h"
+#include <WProgram.h>
+#include <libraries/SD/SD.h>
+typedef SPIDevice_Base<LOW, SPIMaster::InputFirst, SPIMaster::MSBFirst, SPIMaster::DIV2> SDCardDevice;
+uint8_t disk_spi_ss;
+
+//#include <libraries/SerialBus/SerialBus.h>
 #include "HardwareSerial.h"
 
-#define SELECT()	do { DataLoggerShield::sd_card.select(); } while (0)
-#define	DESELECT()	do { DataLoggerShield::sd_card.deselect(); } while (0)
+#define SELECT()	do { digitalWrite(disk_spi_ss, LOW); } while (0)
+#define	DESELECT()	do { digitalWrite(disk_spi_ss, HIGH); } while (0)
 #define	MMC_SEL		(true)	/* CS status (true:CS == L) */
-#define	FORWARD(d)	do { Serial.print(d, HEX); } while (0)	/* Data forwarding function (Console out in this example) */
+#define	FORWARD(d)	do { Serial.println(d, HEX); } while (0)	/* Data forwarding function (Console out in this example) */
 
 #define init_spi()	do { } while (0)
-#define dly_100us()	do { _delay_us(100); } while (0)
+#define dly_100us()	do { delayMicroseconds(100); } while (0)
 #define xmit_spi(x) do { SPIMaster::send(x); SPIMaster::wait_for_complete(); } while (0)
 #define rcv_spi()  (SPIMaster::recv())
 
@@ -51,9 +54,14 @@
 #define CT_BLOCK			0x08	/* Block addressing */
 
 
-static
-uint8_t CardType = 0;
-
+static uint8_t CardType = 0;
+static uint8_t idle_and_return(uint8_t res)
+{
+	DESELECT();
+	rcv_spi();
+	//SPIMaster::disable();
+	return res;
+}
 
 /*-----------------------------------------------------------------------*/
 /* Send a command packet to MMC                                          */
@@ -62,7 +70,7 @@ uint8_t CardType = 0;
 static
 uint8_t send_cmd (
 	uint8_t cmd,		/* 1st byte (Start + Index) */
-	DWORD arg		/* Argument (32 bits) */
+	uint32_t arg		/* Argument (32 bits) */
 )
 {
 	uint8_t n, res;
@@ -75,7 +83,7 @@ uint8_t send_cmd (
 
 	/* Select the card */
 	DESELECT();
-	DataLoggerShield::sd_card.enable();
+	SDCardDevice::enable();
 	rcv_spi();
 	SELECT();
 	rcv_spi();
@@ -96,7 +104,6 @@ uint8_t send_cmd (
 	do {
 		res = rcv_spi();
 	} while ((res & 0x80) && --n);
-	
 	return res;			/* Return with the response value */
 }
 
@@ -123,12 +130,12 @@ DSTATUS disk_initialize (void)
 #endif
 	init_spi();		/* Initialize ports to control MMC */
 	DESELECT();
-	DataLoggerShield::sd_card.enable();
+	SDCardDevice::enable();
 	for (n = 10; n; n--) rcv_spi();	/* 80 dummy clocks with CS=H */
 
 	ty = 0;
 	if (send_cmd(CMD0, 0) == 1) {			/* Enter Idle state */
-		if (send_cmd(CMD8, 0x1AA) == 1) {	/* SDv2 */
+			if (send_cmd(CMD8, 0x1AA) == 1) {	/* SDv2 */
 			for (n = 0; n < 4; n++) ocr[n] = rcv_spi();		/* Get trailing return value of R7 resp */
 			if (ocr[2] == 0x01 && ocr[3] == 0xAA) {			/* The card can work at vdd range of 2.7-3.6V */
 				for (tmr = 10000; tmr && send_cmd(ACMD41, 1UL << 30); tmr--) dly_100us();	/* Wait for leaving idle state (ACMD41 with HCS bit) */
@@ -149,10 +156,7 @@ DSTATUS disk_initialize (void)
 		}
 	}
 	CardType = ty;
-	DESELECT();
-	rcv_spi();
-	DataLoggerShield::sd_card.disable();
-	return ty ? 0 : STA_NOINIT;
+	return idle_and_return(ty ? 0 : STA_NOINIT);
 }
 
 
@@ -163,14 +167,14 @@ DSTATUS disk_initialize (void)
 
 DRESULT disk_readp (
 	uint8_t *buff,		/* Pointer to the read buffer (NULL:Read bytes are forwarded to the stream) */
-	DWORD lba,		/* Sector number (LBA) */
-	WORD ofs,		/* Byte offset to read from (0..511) */
-	WORD cnt		/* Number of bytes to read (ofs + cnt mus be <= 512) */
+	uint32_t lba,		/* Sector number (LBA) */
+	uint16_t ofs,		/* Byte offset to read from (0..511) */
+	uint16_t cnt		/* Number of bytes to read (ofs + cnt mus be <= 512) */
 )
 {
 	DRESULT res;
 	uint8_t rc;
-	WORD bc;
+	uint16_t bc;
 
 
 	if (!(CardType & CT_BLOCK)) lba *= 512;		/* Convert to byte address if needed */
@@ -208,11 +212,7 @@ DRESULT disk_readp (
 		}
 	}
 
-	DESELECT();
-	rcv_spi();
-	DataLoggerShield::sd_card.disable();
-
-	return res;
+	idle_and_return(res);
 }
 
 
@@ -224,17 +224,17 @@ DRESULT disk_readp (
 #if _USE_WRITE
 DRESULT disk_writep (
 	const uint8_t *buff,	/* Pointer to the bytes to be written (NULL:Initiate/Finalize sector write) */
-	DWORD sa			/* Number of bytes to send, Sector number (LBA) or zero */
+	uint32_t sa			/* Number of bytes to send, Sector number (LBA) or zero */
 )
 {
 	DRESULT res;
-	WORD bc;
-	static WORD wc;
+	uint16_t bc;
+	static uint16_t wc;
 
 	res = RES_ERROR;
 
 	if (buff) {		/* Send data bytes */
-		bc = (WORD)sa;
+		bc = (uint16_t)sa;
 		while (bc && wc) {		/* Send data bytes to the card */
 			xmit_spi(*buff++);
 			wc--; bc--;
@@ -255,9 +255,7 @@ DRESULT disk_writep (
 				for (bc = 5000; rcv_spi() != 0xFF && bc; bc--) dly_100us();	/* Wait ready */
 				if (bc) res = RES_OK;
 			}
-			DESELECT();
-			rcv_spi();
-			DataLoggerShield::sd_card.disable();
+			idle_and_return(res);
 		}
 	}
 

@@ -25,6 +25,7 @@
 #if !defined(HardwareSerial_H)
 #  define HardwareSerial_H
 
+#  include <cores/arduino/WProgram.h>
 #  include <cores/arduino/Print.h>
 #  include <cores/arduino/RingBuffer.h>
 

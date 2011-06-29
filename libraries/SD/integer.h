@@ -26,7 +26,7 @@ typedef unsigned char	UCHAR;
 /* These types must be 16-bit integer */
 typedef short			SHORT;
 typedef unsigned short	USHORT;
-typedef unsigned short	WORD;
+//typedef unsigned short	WORD;
 typedef unsigned short	WCHAR;
 
 /* These types must be 32-bit integer */

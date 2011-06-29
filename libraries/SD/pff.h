@@ -67,7 +67,7 @@
 #if _FS_FAT32
 #define	CLUST	DWORD
 #else
-#define	CLUST	WORD
+#define	CLUST	uint16_t
 #endif
 
 
@@ -78,16 +78,16 @@ typedef struct {
 	uint8_t	flag;		/* File status flags */
 	uint8_t	csize;		/* Number of sectors per cluster */
 	uint8_t	pad1;
-	WORD	n_rootdir;	/* Number of root directory entries (0 on FAT32) */
+	uint16_t	n_rootdir;	/* Number of root directory entries (0 on FAT32) */
 	CLUST	n_fatent;	/* Number of FAT entries (= number of clusters + 2) */
-	DWORD	fatbase;	/* FAT start sector */
-	DWORD	dirbase;	/* Root directory start sector (Cluster# on FAT32) */
-	DWORD	database;	/* Data start sector */
-	DWORD	fptr;		/* File R/W pointer */
-	DWORD	fsize;		/* File size */
+	uint32_t	fatbase;	/* FAT start sector */
+	uint32_t	dirbase;	/* Root directory start sector (Cluster# on FAT32) */
+	uint32_t	database;	/* Data start sector */
+	uint32_t	fptr;		/* File R/W pointer */
+	uint32_t	fsize;		/* File size */
 	CLUST	org_clust;	/* File start cluster */
 	CLUST	curr_clust;	/* File current cluster */
-	DWORD	dsect;		/* File current data sector */
+	uint32_t	dsect;		/* File current data sector */
 } FATFS;
 
 
@@ -95,7 +95,7 @@ typedef struct {
 /* Directory object structure */
 
 typedef struct {
-	WORD	index;		/* Current read/write index number */
+	uint16_t	index;		/* Current read/write index number */
 	uint8_t*	fn;			/* Pointer to the SFN (in/out) {file[8],ext[3],status[1]} */
 	CLUST	sclust;		/* Table start cluster (0:Static table) */
 	CLUST	clust;		/* Current cluster */
@@ -108,8 +108,8 @@ typedef struct {
 
 typedef struct {
 	DWORD	fsize;		/* File size */
-	WORD	fdate;		/* Last modified date */
-	WORD	ftime;		/* Last modified time */
+	uint16_t	fdate;		/* Last modified date */
+	uint16_t	ftime;		/* Last modified time */
 	uint8_t	fattrib;	/* Attribute */
 	char	fname[13];	/* File name */
 } FILINFO;
@@ -118,7 +118,7 @@ typedef struct {
 
 /* File function return code (FRESULT) */
 
-typedef enum {
+enum {
 	FR_OK = 0,			/* 0 */
 	FR_DISK_ERR,		/* 1 */
 	FR_NOT_READY,		/* 2 */
@@ -127,18 +127,21 @@ typedef enum {
 	FR_NOT_OPENED,		/* 5 */
 	FR_NOT_ENABLED,		/* 6 */
 	FR_NO_FILESYSTEM	/* 7 */
-} FRESULT;
+};
+
+typedef uint8_t FRESULT;
 
 
 
 /*--------------------------------------------------------------*/
 /* Petit FatFs module application interface                     */
 
-FRESULT pf_mount (FATFS*);						/* Mount/Unmount a logical drive */
+FRESULT pf_mount (FATFS* fs);			/* Mount/Unmount a logical drive */
 FRESULT pf_open (const char*);					/* Open a file */
-FRESULT pf_read (void*, WORD, WORD*);			/* Read data from the open file */
-FRESULT pf_write (const void*, WORD, WORD*);	/* Write data to the open file */
-FRESULT pf_lseek (DWORD);						/* Move file pointer of the open file */
+FRESULT pf_read (void*, uint16_t, uint16_t*);			/* Read data from the open file */
+bool pf_available();
+FRESULT pf_write (const void*, uint16_t, uint16_t*);	/* Write data to the open file */
+FRESULT pf_lseek (uint16_t);						/* Move file pointer of the open file */
 FRESULT pf_opendir (DIR*, const char*);			/* Open a directory */
 FRESULT pf_readdir (DIR*, FILINFO*);			/* Read a directory item from the open directory */
 
@@ -177,15 +180,15 @@ FRESULT pf_readdir (DIR*, FILINFO*);			/* Read a directory item from the open di
 /* Multi-byte word access macros  */
 
 #if _WORD_ACCESS == 1	/* Enable word access to the FAT structure */
-#define	LD_WORD(ptr)		(WORD)(*(WORD*)(uint8_t*)(ptr))
-#define	LD_DWORD(ptr)		(DWORD)(*(DWORD*)(uint8_t*)(ptr))
-#define	ST_WORD(ptr,val)	*(WORD*)(uint8_t*)(ptr)=(WORD)(val)
+#define	LD_WORD(ptr)		(uint16_t)(*(uint16_t*)(uint8_t*)(ptr))
+#define	LD_DWORD(ptr)		(Duint16_t)(*(Duint16_t*)(uint8_t*)(ptr))
+#define	ST_WORD(ptr,val)	*(uint16_t*)(uint8_t*)(ptr)=(uint16_t)(val)
 #define	ST_DWORD(ptr,val)	*(DWORD*)(uint8_t*)(ptr)=(DWORD)(val)
 #else					/* Use byte-by-byte access to the FAT structure */
-#define	LD_WORD(ptr)		(WORD)(((WORD)*((uint8_t*)(ptr)+1)<<8)|(WORD)*(uint8_t*)(ptr))
-#define	LD_DWORD(ptr)		(DWORD)(((DWORD)*((uint8_t*)(ptr)+3)<<24)|((DWORD)*((uint8_t*)(ptr)+2)<<16)|((WORD)*((uint8_t*)(ptr)+1)<<8)|*(uint8_t*)(ptr))
-#define	ST_WORD(ptr,val)	*(uint8_t*)(ptr)=(uint8_t)(val); *((uint8_t*)(ptr)+1)=(uint8_t)((WORD)(val)>>8)
-#define	ST_DWORD(ptr,val)	*(uint8_t*)(ptr)=(uint8_t)(val); *((uint8_t*)(ptr)+1)=(uint8_t)((WORD)(val)>>8); *((uint8_t*)(ptr)+2)=(uint8_t)((DWORD)(val)>>16); *((uint8_t*)(ptr)+3)=(uint8_t)((DWORD)(val)>>24)
+#define	LD_WORD(ptr)		(uint16_t)(((uint16_t)*((uint8_t*)(ptr)+1)<<8)|(uint16_t)*(uint8_t*)(ptr))
+#define	LD_DWORD(ptr)		(DWORD)(((DWORD)*((uint8_t*)(ptr)+3)<<24)|((DWORD)*((uint8_t*)(ptr)+2)<<16)|((uint16_t)*((uint8_t*)(ptr)+1)<<8)|*(uint8_t*)(ptr))
+#define	ST_WORD(ptr,val)	*(uint8_t*)(ptr)=(uint8_t)(val); *((uint8_t*)(ptr)+1)=(uint8_t)((uint16_t)(val)>>8)
+#define	ST_DWORD(ptr,val)	*(uint8_t*)(ptr)=(uint8_t)(val); *((uint8_t*)(ptr)+1)=(uint8_t)((uint16_t)(val)>>8); *((uint8_t*)(ptr)+2)=(uint8_t)((DWORD)(val)>>16); *((uint8_t*)(ptr)+3)=(uint8_t)((DWORD)(val)>>24)
 #endif
 
 

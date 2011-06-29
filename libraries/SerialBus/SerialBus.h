@@ -7,30 +7,6 @@
 #  include <WProgram.h>
 
 
-struct MSBFirst;
-struct LSBFirst
-{
-public:
-	enum { mask = 0x01 };
-	static inline uint8_t shift(uint8_t x) { return x >> 1; }
-
-	typedef MSBFirst Reverse;
-};
-
-struct MSBFirst
-{
-public:
-	enum { mask = 0x80 };
-	static inline uint8_t shift(uint8_t x) { return x << 1; }
-	
-	typedef LSBFirst Reverse;
-};
-
-	
-struct InputFirst { public: enum { cpha = 0x00 }; };
-struct OutputFirst { public: enum { cpha = 0x01 }; };
-
-
 
 
 
@@ -42,6 +18,32 @@ protected:
 	~SerialBUS() {}
 
 public:
+
+
+	struct MSBFirst;
+	struct LSBFirst
+	{
+	public:
+		enum { mask = 0x01 };
+		static inline uint8_t shift(uint8_t x) { return x >> 1; }
+	
+		typedef MSBFirst Reverse;
+	};
+	
+	struct MSBFirst
+	{
+	public:
+		enum { mask = 0x80 };
+		static inline uint8_t shift(uint8_t x) { return x << 1; }
+		
+		typedef LSBFirst Reverse;
+	};
+	
+		
+	struct InputFirst { public: enum { cpha = 0x00 }; };
+	struct OutputFirst { public: enum { cpha = 0x01 }; };
+
+
 
 	enum { pinCLK = clk, pinIn = in, pinOut = out };
 
@@ -67,7 +69,7 @@ public:
 template <
 	typename BUS,
 	uint8_t clkPol,			// アイドル時のクロック極性
-	typename clkPhase,		// 書き出し側のクロック極性
+	typename clkPhase,		// 読み出し先行または買出し先行
 	typename bitorder >
 class SerialDevice
 {
@@ -92,9 +94,9 @@ public:
 			if (clkPhase::cpha != 0x00)
 				BUS::bitOut(send & bitorder::mask);
 
-			digitalWrite(BUS::pinClk, clkPol::inactive);
+			digitalWrite(BUS::pinClk, clkPol == LOW?HIGH:LOW);
 
-			if (clkPhase::cpha != clkPol::active)
+			if (clkPhase::cpha != clkPol)
 				BUS::bitOut(send & bitorder::mask);
 				
 			digitalWrite(BUS::pinCLK, clkPol);
@@ -113,7 +115,7 @@ public:
 
 			digitalWrite(BUS::pinClk, clkPol == LOW? HIGH : LOW);
 
-			if (clkPhase::cpha != clkPol::active && BUS::bitIn())
+			if (clkPhase::cpha != clkPol && BUS::bitIn())
 				recv |= bitorder::Reverse::mask;
 
 			digitalWrite(BUS::pinCLK, clkPol);
@@ -136,7 +138,7 @@ public:
 
 			digitalWrite(BUS::pinClk, clkPol == LOW? HIGH : LOW);
 
-			if (clkPhase::cpha != clkPol::active)
+			if (clkPhase::cpha != clkPol)
 				BUS::bitOut(send & bitorder::mask);
 			else if (BUS::bitIn())
 				recv |= bitorder::Reverse::mask;
@@ -177,11 +179,9 @@ public:
 		digitalWrite(10, HIGH);
 	
 		SPCR |= 1 << MSTR;
+		SPCR |= 1 << SPE;
 	}
 
-
-	static inline void enable() { SPCR |= 1 << SPE; }
-	static inline void disable() { SPCR &= ~(1 << SPE); }
 
 	static void set_divider(int div)
 	{
@@ -190,10 +190,10 @@ public:
 	}
 	
 
-	template <typename clkPol, typename clkPhase>
+	template <uint8_t clkPol, typename clkPhase>
 	static void set_data_mode()
 	{
-		uint8_t datamode = (clkPol::active << CPOL) | (clkPhase::cpha << CPHA);
+		uint8_t datamode = (clkPol? (1 << CPOL) : 0) | (clkPhase::cpha << CPHA);
 		SPCR = (SPCR & ~SPI_MODE_MASK) | datamode;
 	}
 
@@ -253,39 +253,79 @@ public:
 
 
 
+template <
+	uint8_t  clkPol,		// アイドル時のクロック極性
+	typename clkPhase,		// 書き出し側のクロック極性
+	typename bitorder,
+	int clock_divider>
+struct SPIDevice_Base
+{
+	typedef SPIMaster BUS;
+
+	inline SPIDevice_Base() {}
+	inline ~SPIDevice_Base() {}
+
+	static void enable()
+	{
+		SPIMaster::set_divider(clock_divider);
+		SPIMaster::set_bit_order<bitorder>();
+		SPIMaster::set_data_mode<clkPol, clkPhase>();
+	}
+};
+
+
 
 
 template <
-	typename clkPol,		// アイドル時のクロック極性
+	uint8_t  clkPol,		// アイドル時のクロック極性
 	typename clkPhase,		// 書き出し側のクロック極性
 	typename bitorder,
 	int clock_divider,
-	uint8_t ss>
-class SPIDevice
+	int ss>
+class SPIDevice : public SPIDevice_Base<clkPol, clkPhase, bitorder, clock_divider>
 {
 public:
 	inline SPIDevice() {}
 	inline ~SPIDevice() {}
 
-	void begin()
+	static void begin()
 	{
 		pinMode(ss, OUTPUT);
-		disable();
+		deselect();
+		//SPIDevice_Base<clkPol, clkPhase, bitorder, clock_divider>::disable();
 	}
 
-	void enable()
-	{
-		SPIMaster::set_divider(clock_divider);
-		SPIMaster::set_bit_order<bitorder>();
-		SPIMaster::set_data_mode<clkPol, clkPhase>();
-		SPIMaster::enable();
-	}
-	inline void disable() { SPIMaster::disable(); }
-
-	inline void select() { digitalWrite(this->ss, LOW); }
-	inline void deselect() { digitalWrite(this->ss, HIGH); }
+	static inline void select() { digitalWrite(ss, LOW); }
+	static inline void deselect() { digitalWrite(ss, HIGH); }
 };
 
+
+template <
+	uint8_t  clkPol,		// アイドル時のクロック極性
+	typename clkPhase,		// 書き出し側のクロック極性
+	typename bitorder,
+	int clock_divider>
+class SPIDevice<clkPol, clkPhase, bitorder, clock_divider, -1>
+	: public SPIDevice_Base<clkPol, clkPhase, bitorder, clock_divider>
+{
+protected:
+	uint8_t ss_;
+
+public:
+	inline SPIDevice() {}
+	inline ~SPIDevice() {}
+
+	void begin(uint8_t ss)
+	{
+		ss_ = ss;
+		pinMode(ss_, OUTPUT);
+		deselect();
+		//SPIDevice_Base<clkPol, clkPhase, bitorder, clock_divider>::disable();
+	}
+
+	inline void select() { digitalWrite(ss_, LOW); }
+	inline void deselect() { digitalWrite(ss_, HIGH); }
+};
 
 
 #endif

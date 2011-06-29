@@ -24,8 +24,8 @@
 
 #include "pff.h"		/* Petit FatFs configurations and declarations */
 #include "diskio.h"		/* Declarations of low level disk I/O functions */
-
-
+#include <stdint.h>
+#include <string.h>
 
 /*--------------------------------------------------------------------------
 
@@ -35,7 +35,7 @@
 
 
 #if _FS_FAT32
-#define LD_CLUST(dir)	(((DWORD)LD_WORD(dir+DIR_FstClusHI)<<16) | LD_WORD(dir+DIR_FstClusLO))
+#define LD_CLUST(dir)	(((uint32_t)LD_WORD(dir+DIR_FstClusHI)<<16) | LD_WORD(dir+DIR_FstClusLO))
 #else
 #define LD_CLUST(dir)	LD_WORD(dir+DIR_FstClusLO)
 #endif
@@ -329,20 +329,19 @@ FATFS *FatFs;	/* Pointer to the file system object (logical drive) */
 
 
 /* Fill memory */
-static
-void mem_set (void* dst, int val, int cnt) {
-	char *d = (char*)dst;
-	while (cnt--) *d++ = (char)val;
-}
+static inline
+void mem_set (void* dst, int val, int cnt) { ::memset(dst, val, cnt); }
+//	char *d = (char*)dst;
+//	while (cnt--) *d++ = (char)val;
 
 /* Compare memory to memory */
-static
-int mem_cmp (const void* dst, const void* src, int cnt) {
+static inline
+int mem_cmp (const void* dst, const void* src, int cnt) { ::memcmp(dst, src, cnt); }
+	/*
 	const char *d = (const char *)dst, *s = (const char *)src;
 	int r = 0;
 	while (cnt-- && (r = *d++ - *s++) == 0) ;
-	return r;
-}
+	return r;*/
 
 
 
@@ -355,7 +354,7 @@ CLUST get_fat (	/* 1:IO error, Else:Cluster status */
 	CLUST clst	/* Cluster# to get the link information */
 )
 {
-	WORD wc, bc, ofs;
+	uint16_t wc, bc, ofs;
 	uint8_t buf[4];
 	FATFS *fs = FatFs;
 
@@ -366,7 +365,7 @@ CLUST get_fat (	/* 1:IO error, Else:Cluster status */
 	switch (fs->fs_type) {
 #if _FS_FAT12
 	case FS_FAT12 :
-		bc = (WORD)clst; bc += bc / 2;
+		bc = (uint16_t)clst; bc += bc / 2;
 		ofs = bc % 512; bc /= 512;
 		if (ofs != 511) {
 			if (disk_readp(buf, fs->fatbase + bc, ofs, 2)) break;
@@ -378,11 +377,11 @@ CLUST get_fat (	/* 1:IO error, Else:Cluster status */
 		return (clst & 1) ? (wc >> 4) : (wc & 0xFFF);
 #endif
 	case FS_FAT16 :
-		if (disk_readp(buf, fs->fatbase + clst / 256, (WORD)(((WORD)clst % 256) * 2), 2)) break;
+		if (disk_readp(buf, fs->fatbase + clst / 256, (uint16_t)(((uint16_t)clst % 256) * 2), 2)) break;
 		return LD_WORD(buf);
 #if _FS_FAT32
 	case FS_FAT32 :
-		if (disk_readp(buf, fs->fatbase + clst / 128, (WORD)(((WORD)clst % 128) * 4), 4)) break;
+		if (disk_readp(buf, fs->fatbase + clst / 128, (uint16_t)(((uint16_t)clst % 128) * 4), 4)) break;
 		return LD_DWORD(buf) & 0x0FFFFFFF;
 #endif
 	}
@@ -398,7 +397,7 @@ CLUST get_fat (	/* 1:IO error, Else:Cluster status */
 /*-----------------------------------------------------------------------*/
 
 static
-DWORD clust2sect (	/* !=0: Sector number, 0: Failed - invalid cluster# */
+uint32_t clust2sect (	/* !=0: Sector number, 0: Failed - invalid cluster# */
 	CLUST clst		/* Cluster# to be converted */
 )
 {
@@ -407,7 +406,7 @@ DWORD clust2sect (	/* !=0: Sector number, 0: Failed - invalid cluster# */
 
 	clst -= 2;
 	if (clst >= (fs->n_fatent - 2)) return 0;		/* Invalid cluster# */
-	return (DWORD)clst * fs->csize + fs->database;
+	return (uint32_t)clst * fs->csize + fs->database;
 }
 
 
@@ -451,7 +450,7 @@ FRESULT dir_next (	/* FR_OK:Succeeded, FR_NO_FILE:End of table */
 )
 {
 	CLUST clst;
-	WORD i;
+	uint16_t i;
 	FATFS *fs = FatFs;
 
 
@@ -485,7 +484,7 @@ FRESULT dir_next (	/* FR_OK:Succeeded, FR_NO_FILE:End of table */
 
 
 
-
+#include <HardwareSerial.h>
 /*-----------------------------------------------------------------------*/
 /* Directory handling - Find an object in the directory                  */
 /*-----------------------------------------------------------------------*/
@@ -499,12 +498,11 @@ FRESULT dir_find (
 	FRESULT res;
 	uint8_t c;
 
-
 	res = dir_rewind(dj);			/* Rewind directory object */
 	if (res != FR_OK) return res;
 
 	do {
-		res = disk_readp(dir, dj->sect, (WORD)((dj->index % 16) * 32), 32)	/* Read an entry */
+		res = disk_readp(dir, dj->sect, (uint16_t)((dj->index % 16) * 32), 32)	/* Read an entry */
 			? FR_DISK_ERR : FR_OK;
 		if (res != FR_OK) break;
 		c = dir[DIR_Name];	/* First character */
@@ -536,7 +534,7 @@ FRESULT dir_read (
 
 	res = FR_NO_FILE;
 	while (dj->sect) {
-		res = disk_readp(dir, dj->sect, (WORD)((dj->index % 16) * 32), 32)	/* Read an entry */
+		res = disk_readp(dir, dj->sect, (uint16_t)((dj->index % 16) * 32), 32)	/* Read an entry */
 			? FR_DISK_ERR : FR_OK;
 		if (res != FR_OK) break;
 		c = dir[DIR_Name];
@@ -704,7 +702,7 @@ FRESULT follow_path (	/* FR_OK(0): successful, !=0: error code */
 static
 uint8_t check_fs (	/* 0:The FAT boot record, 1:Valid boot record but not an FAT, 2:Not a boot record, 3:Error */
 	uint8_t *buf,	/* Working buffer */
-	DWORD sect	/* Sector# (lba) to check if it is an FAT boot record or not */
+	uint32_t sect	/* Sector# (lba) to check if it is an FAT boot record or not */
 )
 {
 	if (disk_readp(buf, sect, 510, 2))		/* Read the boot sector */
@@ -739,10 +737,10 @@ FRESULT pf_mount (
 )
 {
 	uint8_t fmt, buf[36];
-	DWORD bsect, fsize, tsect, mclst;
+	uint32_t bsect, fsize, tsect, mclst;
 
 	FatFs = 0;
-	if (!fs) return FR_OK;				/* Unregister fs object */
+	if (! fs) return FR_OK;
 
 	if (disk_initialize() & STA_NOINIT)	/* Check if the drive is ready or not */
 		return FR_NOT_READY;
@@ -853,14 +851,14 @@ FRESULT pf_open (
 
 FRESULT pf_read (
 	void* buff,		/* Pointer to the read buffer (NULL:Forward data to the stream)*/
-	WORD btr,		/* Number of bytes to read */
-	WORD* br		/* Pointer to number of bytes read */
+	uint16_t btr,		/* Number of bytes to read */
+	uint16_t* br		/* Pointer to number of bytes read */
 )
 {
 	DRESULT dr;
 	CLUST clst;
-	DWORD sect, remain;
-	WORD rcnt;
+	uint32_t sect, remain;
+	uint16_t rcnt;
 	uint8_t cs, *rbuff = (uint8_t*)buff;
 	FATFS *fs = FatFs;
 
@@ -871,7 +869,7 @@ FRESULT pf_read (
 		return FR_NOT_OPENED;
 
 	remain = fs->fsize - fs->fptr;
-	if (btr > remain) btr = (WORD)remain;			/* Truncate btr by remaining bytes */
+	if (btr > remain) btr = (uint16_t)remain;			/* Truncate btr by remaining bytes */
 
 	while (btr)	{									/* Repeat until all data transferred */
 		if ((fs->fptr % 512) == 0) {				/* On the sector boundary? */
@@ -886,9 +884,9 @@ FRESULT pf_read (
 			if (!sect) goto fr_abort;
 			fs->dsect = sect + cs;
 		}
-		rcnt = (WORD)(512 - (fs->fptr % 512));		/* Get partial sector data from sector buffer */
+		rcnt = (uint16_t)(512 - (fs->fptr % 512));		/* Get partial sector data from sector buffer */
 		if (rcnt > btr) rcnt = btr;
-		dr = disk_readp(!buff ? 0 : rbuff, fs->dsect, (WORD)(fs->fptr % 512), rcnt);
+		dr = disk_readp(!buff ? 0 : rbuff, fs->dsect, (uint16_t)(fs->fptr % 512), rcnt);
 		if (dr) goto fr_abort;
 		fs->fptr += rcnt; rbuff += rcnt;			/* Update pointers and counters */
 		btr -= rcnt; *br += rcnt;
@@ -899,6 +897,12 @@ FRESULT pf_read (
 fr_abort:
 	fs->flag = 0;
 	return FR_DISK_ERR;
+}
+
+
+bool pf_available()
+{
+	return FatFs->fsize > FatFs->fptr;
 }
 #endif
 
@@ -911,15 +915,15 @@ fr_abort:
 
 FRESULT pf_write (
 	const void* buff,	/* Pointer to the data to be written */
-	WORD btw,			/* Number of bytes to write (0:Finalize the current write operation) */
-	WORD* bw			/* Pointer to number of bytes written */
+	uint16_t btw,			/* Number of bytes to write (0:Finalize the current write operation) */
+	uint16_t* bw			/* Pointer to number of bytes written */
 )
 {
 	CLUST clst;
-	DWORD sect, remain;
+	uint32_t sect, remain;
 	const uint8_t *p = (const uint8_t*)buff;
 	uint8_t cs;
-	WORD wcnt;
+	uint16_t wcnt;
 	FATFS *fs = FatFs;
 
 
@@ -937,10 +941,10 @@ FRESULT pf_write (
 			fs->fptr &= 0xFFFFFE00;
 	}
 	remain = fs->fsize - fs->fptr;
-	if (btw > remain) btw = (WORD)remain;			/* Truncate btw by remaining bytes */
+	if (btw > remain) btw = (uint16_t)remain;			/* Truncate btw by remaining bytes */
 
 	while (btw)	{									/* Repeat until all data transferred */
-		if (((WORD)fs->fptr % 512) == 0) {			/* On the sector boundary? */
+		if (((uint16_t)fs->fptr % 512) == 0) {			/* On the sector boundary? */
 			cs = (uint8_t)(fs->fptr / 512 & (fs->csize - 1));	/* Sector offset in the cluster */
 			if (!cs) {								/* On the cluster boundary? */
 				clst = (fs->fptr == 0) ?			/* On the top of the file? */
@@ -954,12 +958,12 @@ FRESULT pf_write (
 			if (disk_writep(0, fs->dsect)) goto fw_abort;	/* Initiate a sector write operation */
 			fs->flag |= FA__WIP;
 		}
-		wcnt = 512 - ((WORD)fs->fptr % 512);		/* Number of bytes to write to the sector */
+		wcnt = 512 - ((uint16_t)fs->fptr % 512);		/* Number of bytes to write to the sector */
 		if (wcnt > btw) wcnt = btw;
 		if (disk_writep(p, wcnt)) goto fw_abort;	/* Send data to the sector */
 		fs->fptr += wcnt; p += wcnt;				/* Update pointers and counters */
 		btw -= wcnt; *bw += wcnt;
-		if (((WORD)fs->fptr % 512) == 0) {
+		if (((uint16_t)fs->fptr % 512) == 0) {
 			if (disk_writep(0, 0)) goto fw_abort;	/* Finalize the currtent secter write operation */
 			fs->flag &= ~FA__WIP;
 		}
@@ -981,11 +985,11 @@ fw_abort:
 #if _USE_LSEEK
 
 FRESULT pf_lseek (
-	DWORD ofs		/* File pointer from top of file */
+	uint32_t ofs		/* File pointer from top of file */
 )
 {
 	CLUST clst;
-	DWORD bcs, sect, ifptr;
+	uint32_t bcs, sect, ifptr;
 	FATFS *fs = FatFs;
 
 
@@ -997,7 +1001,7 @@ FRESULT pf_lseek (
 	ifptr = fs->fptr;
 	fs->fptr = 0;
 	if (ofs > 0) {
-		bcs = (DWORD)fs->csize * 512;	/* Cluster size (byte) */
+		bcs = (uint32_t)fs->csize * 512;	/* Cluster size (byte) */
 		if (ifptr > 0 &&
 			(ofs - 1) / bcs >= (ifptr - 1) / bcs) {	/* When seek to same or following cluster, */
 			fs->fptr = (ifptr - 1) & ~(bcs - 1);	/* start from the current cluster */
