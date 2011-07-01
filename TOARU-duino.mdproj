@@ -47,14 +47,12 @@
     <None Include="libraries\EEPROM\keywords.txt" />
     <None Include="libraries\EEPROM\EEPROM.h" />
     <None Include="libraries\EEPROM\EEPROM.cpp" />
-    <None Include="libraries\DataLoggerShield\DataLogger.h" />
     <None Include="libraries\DataLoggerShield\examples\DataLoggerTest.pde" />
     <None Include="Makefile" />
     <None Include="cores\arduino\PinMapper.h" />
     <None Include="libraries\PWMMatrix\examples\heartbeat.pde" />
     <None Include="libraries\PWMMatrix\examples\counter.pde" />
     <None Include="TODO.txt" />
-    <None Include="libraries\RTC\RTC4543\RTC4543.h" />
     <None Include="libraries\SD\diskio.h" />
     <None Include="libraries\SD\mmc.cpp" />
     <None Include="libraries\SD\pff.cpp" />
@@ -65,6 +63,8 @@
     <None Include="libraries\SD\examples\Files.pde" />
     <None Include="libraries\SD\examples\DumpFile.pde" />
     <None Include="libraries\SD\examples\Datalogger.pde" />
+    <None Include="libraries\RTC\examples\RTCRead.pde" />
+    <None Include="libraries\RTC\RTC4543.h" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -113,7 +113,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="libraries\RTC\" />
-    <Folder Include="libraries\RTC\RTC4543\" />
     <Folder Include="libraries\DataLoggerShield\" />
     <Folder Include="libraries\SD\" />
     <Folder Include="libraries\SD\examples\" />

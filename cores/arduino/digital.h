@@ -126,5 +126,24 @@ inline bool digitalRead(int pin)
 unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout);
 void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val);
 
+
+
+/**
+ IOポートアドレスとビットマスクの対を定義します。
+*/
+typedef uint16_t IOMask_t;
+
+inline void ioMaskWrite(IOMask_t bit, uint8_t val)
+{
+	if (val == LOW)
+		*(uint8_t volatile*)(bit >> 8) &= !(bit & 0x0f);
+	else
+		*(uint8_t volatile*)(bit >> 8) |= bit & 0x0f;
+}
+
+IOMask_t inline pinno2ddrmask(uint8_t pin)	{ return (uint8_t)pinno2ddrreg(pin) << 8 | (1 << pinno2bit(pin)); }
+IOMask_t inline pinno2portmask(uint8_t pin)	{ return (uint8_t)pinno2portreg(pin) << 8 | (1 << pinno2bit(pin)); }
+IOMask_t inline pinno2pinmask(uint8_t pin)	{ return (uint8_t)pinno2pinreg(pin) << 8 | (1 << pinno2bit(pin)); }
+
 #endif
 

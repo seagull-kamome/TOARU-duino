@@ -26,7 +26,7 @@ public:
 	public:
 		enum { mask = 0x01 };
 		static inline uint8_t shift(uint8_t x) { return x >> 1; }
-	
+
 		typedef MSBFirst Reverse;
 	};
 	
@@ -35,7 +35,7 @@ public:
 	public:
 		enum { mask = 0x80 };
 		static inline uint8_t shift(uint8_t x) { return x << 1; }
-		
+
 		typedef LSBFirst Reverse;
 	};
 	
@@ -77,10 +77,8 @@ protected:
 	inline SerialDevice()	{}
 	inline ~SerialDevice()	{}
 
-
 public:
 	static inline void begin()		{}
-	static inline void end()		{}
 
 	static inline void pulse()
 	{
@@ -88,37 +86,43 @@ public:
 		digitalWrite(BUS::pinCLK, clkPol);
 	}
 
-	static void shift_out(uint8_t send, uint8_t bits)
+	static void shift_out(uint8_t send, uint8_t bits, uint8_t clk_us)
 	{
 		while (bits--) {
 			if (clkPhase::cpha != 0x00)
 				BUS::bitOut(send & bitorder::mask);
 
 			digitalWrite(BUS::pinClk, clkPol == LOW?HIGH:LOW);
+			delayMicroseconds(clk_us);
 
-			if (clkPhase::cpha != clkPol)
+			if (clkPhase::cpha == 0x00)
 				BUS::bitOut(send & bitorder::mask);
-				
+
 			digitalWrite(BUS::pinCLK, clkPol);
+			delayMicroseconds(clk_us);
+
 			send = bitorder::shift(send);
 		}
 	}
 
-	static uint8_t shift_in(uint8_t bits)
+	static uint8_t shift_in(uint8_t bits, uint8_t clk_us)
 	{
 		uint8_t recv = 0x00;
+		uint8_t msk = bitorder::mask;
 		while (bits--) {
-			recv = bitorder::shift(recv);
-
 			if (clkPhase::cpha == 0x00 && BUS::bitIn())
-				recv |= bitorder::Reverse::mask;
+				recv |= msk;
 
 			digitalWrite(BUS::pinClk, clkPol == LOW? HIGH : LOW);
+			delayMicroseconds(clk_us);
 
-			if (clkPhase::cpha != clkPol && BUS::bitIn())
-				recv |= bitorder::Reverse::mask;
+			if (clkPhase::cpha != 0x00 && BUS::bitIn())
+				recv |= msk;
 
 			digitalWrite(BUS::pinCLK, clkPol);
+			delayMicroseconds(clk_us);
+			
+			msk = bitorder::Reverse::shift(msk);
 		}
 
 		return recv;
@@ -179,8 +183,11 @@ public:
 		digitalWrite(10, HIGH);
 	
 		SPCR |= 1 << MSTR;
-		SPCR |= 1 << SPE;
 	}
+
+	// NOTE: ソフトウェアSPIと併用する場合があるので、使用中のみenableにする事
+	static inline void enable() { SPCR  |= 1 << SPE; }
+	static inline void disable() { SPCR  &= ~(1 << SPE); }
 
 
 	static void set_divider(int div)
