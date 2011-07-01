@@ -30,12 +30,16 @@
 
  	void emit(uint8_t x)
  	{
- 		uint8_t ww = (w_ + 1) % N;
- 		if (ww != r_) {
- 			xs_[w_] = x;
- 			w_ = ww;
-		}
+		xs_[w_] = x;
+ 		w_ = (w_ + 1) % N;
  	}
+ 	
+ 	
+	uint8_t available()
+	{
+		return (w_ > r_)? w_ -r_ : r_ - w_;
+	}
+
 	uint8_t pull()
 	{
 		if (isEmpty()) return 0;

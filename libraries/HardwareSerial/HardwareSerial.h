@@ -53,7 +53,10 @@ public:
 
 	uint8_t available()
 	{
-		return (RX_BUFFER_SIZE + rx_buf.w_ - rx_buf.r_) % RX_BUFFER_SIZE;
+		nointerrupts();
+		uint8_t res =  rx_buf.available();
+		interrupts();
+		return res;
 	}
 
 	void flush() { rx_buf.clear(); }

@@ -72,8 +72,9 @@ case $ARDUINO_BOARD in
 		;;
 esac
 
-CPPFLAGS="-mmcu=$MCU -DF_CPU=$F_CPU -std=gnu99 -I. -I$ARDUINO_DIR -I$ARDUINO_DIR/cores/arduino"
-CFLAGS="$CPPFLAGS -std=gnu99 -I. -I$ARDUINO_DIR -I$ARDUINO_DIR/cores/arduino -g -O99 -Os -w -Wall -ffunction-sections -fdata-sections"
+
+CPPFLAGS="-mmcu=$MCU -DF_CPU=$F_CPU -std=gnu99 -I. -I$ARDUINO_DIR -I$ARDUINO_DIR/cores/arduino -I$ARDUINO_DIR/libraries"
+CFLAGS="$CPPFLAGS -std=gnu99 -I. -I$ARDUINO_DIR -I$ARDUINO_DIR/cores/arduino -I$ARDUINO_DIR/libraries -g -O99 -Os -w -Wall -ffunction-sections -fdata-sections"
 CXXFLAGS="$CFLAGS -fno-exceptions"
 PDEFLAGS="$CXXFLAGS -xc++ -include cores/arduino/pde_main.inc"
 ASFLAGS="$CPPFLAGS -x assembler-with-cpp"
