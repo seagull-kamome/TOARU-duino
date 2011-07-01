@@ -65,6 +65,9 @@
     <None Include="libraries\SD\examples\Datalogger.pde" />
     <None Include="libraries\RTC\examples\RTCRead.pde" />
     <None Include="libraries\RTC\RTC4543.h" />
+    <None Include="libraries\Tone\examples\toneKeyboard.pde" />
+    <None Include="libraries\Tone\examples\toneMelody.pde" />
+    <None Include="libraries\Tone\examples\toneMultiple.pde" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
