@@ -23,9 +23,14 @@
  */
 #include <cores/arduino/Print.h>
 
-void Print::print(char const* str)
+void Print::write(char const* str)
 {
 	while (*str) write(*str++);
+}
+
+void Print::write(uint8_t const* p, uint8_t n)
+{
+	while (n--) write(*p++);
 }
 
 void Print::print(uint8_t x, uint8_t fmt) { print((uint32_t)x, fmt); }

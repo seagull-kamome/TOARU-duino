@@ -19,37 +19,51 @@
  #if !defined(ARDUINO__CORE__RINGBUFFER_H)
  #  define ARDUINO__CORE__RINGBUFFER_H
  
- template <int N>
- struct RingBuffer {
- 	enum { BUFFER_SIZE = N };
- 
- 	uint8_t w_, r_;
+template <int N>
+class RingBuffer
+{
+protected: 
+ 	uint8_t w_;
+	uint8_t r_;
  	uint8_t xs_[N];
- 
- 	RingBuffer() : w_(0), r_(0) {}
+
+public: 
+ 	enum { BUFFER_SIZE = N };
+
+ 	RingBuffer() { clear(); }
+
 
  	void emit(uint8_t x)
  	{
 		xs_[w_] = x;
  		w_ = (w_ + 1) % N;
  	}
- 	
- 	
+ 
 	uint8_t available()
 	{
-		return (w_ > r_)? w_ -r_ : r_ - w_;
+		uint8_t oldsreg = SREG;
+		nointerrupt();
+		uint8_t x = (w_ > r_)? w_ -r_ : r_ - w_;
+		SREG = oldsreg;
+		return x;
 	}
+
 
 	uint8_t pull()
 	{
-		if (isEmpty()) return 0;
-		uint8_t x = xs_[r_++];
-		r_ %= N;
+		uint8_t x = xs_[r_];
+		r_ = (r_ + 1) % N;
 		return x;
 	}
-	
+
+	uint8_t peek()
+	{
+		return xs_[r_];
+	}
+
 	void clear() { w_ = r_ = 0; }
 	bool isEmpty() const { return r_ == w_; }
+	bool isFull() const { return (_w + 1) % N == _r; }
  };
  
  

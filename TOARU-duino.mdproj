@@ -68,6 +68,7 @@
     <None Include="libraries\Tone\examples\toneKeyboard.pde" />
     <None Include="libraries\Tone\examples\toneMelody.pde" />
     <None Include="libraries\Tone\examples\toneMultiple.pde" />
+    <None Include="cores\arduino\Stream.h" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

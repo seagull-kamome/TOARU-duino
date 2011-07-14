@@ -21,8 +21,9 @@
 #define SoftwareSerial_h
 
 #include <inttypes.h>
+#include <Print.h>
 
-class SoftwareSerial
+class SoftwareSerial : Print
 {
   private:
     uint8_t _receivePin;
@@ -34,22 +35,7 @@ class SoftwareSerial
     SoftwareSerial(uint8_t, uint8_t);
     void begin(long);
     int read();
-    void print(char);
-    void print(const char[]);
-    void print(uint8_t);
-    void print(int);
-    void print(unsigned int);
-    void print(long);
-    void print(unsigned long);
-    void print(long, int);
-    void println(void);
-    void println(char);
-    void println(const char[]);
-    void println(uint8_t);
-    void println(int);
-    void println(long);
-    void println(unsigned long);
-    void println(long, int);
+    void write(uint8_t ch);
 };
 
 #endif

@@ -30,10 +30,10 @@
 #  include <cores/arduino/RingBuffer.h>
 
 
-class Uart : public Print
+class Uart : public Stream
 {
 public:
-	enum { TX_PIN = 0, RX_PIN = 1, RX_BUFFER_SIZE=128 };
+	enum { TX_PIN = 0, RX_PIN = 1, RX_BUFFER_SIZE=16, TX_BUFFER_SIZE=16 };
 
 
 	static __inline__ bool calcBaud(unsigned long baud, uint16_t* baud_setting)
@@ -51,24 +51,34 @@ public:
 
 	}
 
-	uint8_t available()
+	virtual uint8_t available()
 	{
-		nointerrupts();
-		uint8_t res =  rx_buf.available();
-		interrupts();
-		return res;
+		return rx_buf.available();
 	}
 
-	void flush() { rx_buf.clear(); }
+	virtual void flush() { while (! tx_buf.isEmpty()); }
 
-	int read()
+	virtual int read()
 	{
 		if (rx_buf.isEmpty()) return -1;
 		return (int)rx_buf.pull();
 	}
 
+	virtual int peek()
+	{
+		if (rx_buf.isEmpty()) return -1;
+		return (int)rx_buf.peek();
+	}
+
+	virtual void write(uint8_t x)
+	{
+		while (tx_buf.isFull()) ;
+		tx_buf.emit(x);
+	}
+
 protected:
 	RingBuffer<RX_BUFFER_SIZE> rx_buf;
+	RingBuffer<TX_BUFFER_SIZE> tx_buf;
 };
 
 
@@ -90,13 +100,13 @@ public:
 
 	void __inline__ end()
 	{
-		UCSR0B &= ~((1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0));
+		UCSR0B &= ~((1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0) | (1 << UDRIE0));
 	}
 
 	virtual void write(uint8_t x)
 	{
-		while (!(UCSR0A & (1 << UDRE0))) ;
-		UDR0 = x;
+		Uart::write(x);
+		UCSR0B |= 1 << UDRIE0;
 	}
 };
 

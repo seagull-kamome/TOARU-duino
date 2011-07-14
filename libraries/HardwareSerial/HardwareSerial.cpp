@@ -26,5 +26,12 @@ ISR(USART_RX_vect)
 	Serial.rx_buf.emit(UDR0);
 }
 
+ISR(USART_UDRE_vect)
+{
+	if (Serial.tx_buf.isEmpty())
+		UCSR0B &= ~(1 << UDRIE0);
+
+	UDR = Serial.tx_buf.pull();
+}
 
 
