@@ -31,8 +31,10 @@ enum { BYTE = 0, BIN = 2, OCT = 8, DEC= 10, HEX = 16 };
 struct Print
 {
 	virtual void write(uint8_t ch) = 0;
+	virtual void write(char const* str);
+	virtual void write(uint8_t const* p, uint8_t n);
 
-	void print(char const* str);
+	void print(char const* str) { write(str); }
 	
 	void print(uint8_t x, uint8_t fmt=DEC);
 	void print(int8_t x, uint8_t fmt=DEC);
