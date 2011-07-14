@@ -35,36 +35,7 @@ void pinMode_noconst(uint8_t pin, uint8_t mode)
 
 void turnOffPWM_noconst(uint8_t pin)
 {
-
-	switch (pin)
-	{
-	case 3:		// OC2B
-		TCCR2A &= ~(1 << COM2B1);
-		break;
-
-	case 5:		// OC0B
-		TCCR0A &= ~(1 << COM0B1);
-		break;
-
-	case 6:		// OC0A
-		TCCR0A &= ~(1 << COM0A1);
-		break;
-
-	case 9:		// OC1A
-		TCCR1A &= ~(1 << COM1A1);
-		break;
-
-	case 10:	// OC1B
-		TCCR1A &= ~(1 << COM1B1);
-		break;
-
-	case 11:	// OC2A
-		TCCR2A &= ~(1 << COM2A1);
-		break;
-
-	default:
-		break;
-	}
+	turnOffPWM_const(pin);
 }
 
 bool digitalRead_noconst(uint8_t pin)
@@ -83,6 +54,13 @@ void digitalWrite_noconst(uint8_t pin, uint8_t val)
 		pinno2portreg(pin) |= 1 << pinno2bit(pin);
 	else
 		pinno2portreg(pin) &= ~(1 << pinno2bit(pin));
+}
+
+
+void digitalToggle_noconst(uint8_t pin)
+{
+	trunOffPWM_noconst(pin);
+	pinno2pinreg(pin) |= 1 << pinno2bit(pin);
 }
 
 

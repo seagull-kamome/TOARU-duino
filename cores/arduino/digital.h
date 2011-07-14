@@ -60,37 +60,38 @@ inline void pinMode(uint8_t pin, uint8_t mode)
 		pinMode_noconst(pin, mode);
 }
 
-#  define turnOffPWM_const(pin) do {								\
-		switch (pin)												\
-		{															\
-		case 3:		/* OC2B	*/										\
-			TCCR2A &= ~(1 << COM2B1);								\
-			break;													\
-		case 5:		/* OC0B */										\
-			TCCR0A &= ~(1 << COM0B1);								\
-			break;													\
-		case 6:		/* OC0A */										\
-			TCCR0A &= ~(1 << COM0A1);								\
-			break;													\
-		case 9:		/* OC1A */										\
-			TCCR1A &= ~(1 << COM1A1);								\
-			break;													\
-		case 10:	/* OC1B */										\
-			TCCR1A &= ~(1 << COM1B1);								\
-			break;													\
-		case 11:	/* OC2A */										\
-			TCCR2A &= ~(1 << COM2A1);								\
-			break;													\
-		default:													\
-			break;													\
-		}															\
-	} while (0)
+void turnOffPWM_const(uint8_t pin) __attribute__ ((always_inline));
+void turnOffPWM_const(uint8_t pin)
+{
+	switch (pin) {
+	case 3:		/* OC2B	*/
+		TCCR2A &= ~(1 << COM2B1);
+		break;
+	case 5:		/* OC0B */
+		TCCR0A &= ~(1 << COM0B1);
+		break;
+	case 6:		/* OC0A */
+		TCCR0A &= ~(1 << COM0A1);
+		break;
+	case 9:		/* OC1A */
+		TCCR1A &= ~(1 << COM1A1);
+		break;
+	case 10:	/* OC1B */
+		TCCR1A &= ~(1 << COM1B1);
+		break;
+	case 11:	/* OC2A */
+		TCCR2A &= ~(1 << COM2A1);
+		break;
+	default:
+		break;
+	}
+}
 
 void turnOffPWM_noconst(uint8_t pin);
 
 
-inline void digitalWrite_const(int pin, int val) __attribute__ ((always_inline));
-inline void digitalWrite_const(int pin, int val)
+inline void digitalWrite_const(uint8_t pin, int val) __attribute__ ((always_inline));
+inline void digitalWrite_const(uint8_t pin, int val)
 {
 	turnOffPWM_const(pin);
 	if (val)
@@ -102,21 +103,34 @@ inline void digitalWrite_const(int pin, int val)
 
 void digitalWrite_noconst(uint8_t pin, uint8_t val);
 
-inline bool digitalWrite(int pin, int val) __attribute__ ((always_inline));
-inline bool digitalWrite(int pin, int val)
+inline void digitalWrite(uint8_t pin, int val) __attribute__ ((always_inline));
+inline void digitalWrite(uint8_t pin, int val)
 {
 	if (__builtin_constant_p(pin)) digitalWrite_const(pin, val);
 	else digitalWrite_noconst(pin, val);
 }
 
 
-bool digitalRead_noconst(uint8_t pin);
-inline bool digitalRead(int pin) __attribute__ ((always_inline));
-inline bool digitalRead(int pin)
+void digitalToggle_noconst(uint8_t pin);
+inline void digitalToggle(uint8_t pin) __attribute__ ((always_inline));
+inline void digitalToggle(uint8_t pin)
 {
-	if (__builtin_constant_p(pin))
+	if (__builtin_constant_p(pin)) {
+		trunOffPWM_const(pin);
+		pinno2pinreg(pin) |= 1 << pinno2bit(pin);
+	} else
+		digitalToggle_noconst(pin);
+}
+
+
+bool digitalRead_noconst(uint8_t pin);
+inline bool digitalRead(uint8_t pin) __attribute__ ((always_inline));
+inline bool digitalRead(uint8_t pin)
+{
+	if (__builtin_constant_p(pin)) {
+		trunOffPWM_const(pin);
 		return ((pinno2pinreg(pin) & (1 << pinno2bit(pin)))?HIGH:LOW);
-	else 
+	} else 
 		return digitalRead_noconst(pin);
 }
 
